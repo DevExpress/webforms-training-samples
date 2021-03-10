@@ -1,0 +1,90 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Root.master.cs" Inherits="sample_2_3.Root" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server" enableviewstate="false">
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <style>
+        html, body, form {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .header {
+            padding: 10px 0;
+            width: 100%;
+        }
+
+        .contentcontainer {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            width: 100%;
+        }
+
+        .leftPanel {
+            padding: 10px;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            gap: 10px;
+            width: 100%;
+        }
+    </style>
+
+    <asp:ContentPlaceHolder runat="server" ID="Head"></asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server" class="form">
+        <asp:XmlDataSource ID="menuDataSource" runat="server" DataFile="~/App_Data/TopMenu.xml"
+            XPath="/items/*"></asp:XmlDataSource>
+        <asp:XmlDataSource ID="navbarDataSource" runat="server" DataFile="~/App_Data/SideMenu.xml"
+            XPath="/groups/*"></asp:XmlDataSource>
+
+        <div class="container">
+            <div class="header">
+                <dx:ASPxMenu runat="server" ID="applicationMenu" ItemAutoWidth="true" ItemWrap="false" SeparatorWidth="0"
+                    Width="100%" SyncSelectionMode="CurrentPath" DataSourceID="menuDataSource">
+                    <ItemImage Height="24px" Width="24px" />
+                    <ItemStyle VerticalAlign="Middle" />
+                </dx:ASPxMenu>
+            </div>
+
+            <div class="contentcontainer">
+                <div class="leftPanel">
+                    <dx:ASPxPanel runat="server" ID="LeftPanel" ClientInstanceName="leftPanel" Collapsible="true" ScrollBars="Auto"
+                        Width="280px">
+                        <SettingsCollapsing ExpandButton-GlyphType="Strips" ExpandEffect="PopupToRight" />
+                        <SettingsAdaptivity CollapseAtWindowInnerWidth="960" />
+                        <PanelCollection>
+                            <dx:PanelContent runat="server">
+                                <dx:ASPxNavBar ID="ASPxNavBar1" runat="server" EnableAnimation="True" Width="100%"
+                                    SyncSelectionMode="CurrentPath" DataSourceID="navbarDataSource">
+                                    <ItemImage Height="24px" Width="24px" />
+                                </dx:ASPxNavBar>
+                            </dx:PanelContent>
+                        </PanelCollection>
+                    </dx:ASPxPanel>
+                </div>
+                <div class="content" id="pageContent">
+                    <asp:ContentPlaceHolder runat="server" ID="PageContent"></asp:ContentPlaceHolder>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>

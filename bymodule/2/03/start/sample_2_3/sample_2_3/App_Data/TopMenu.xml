@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<items>
+  <item Text="Home" NavigateUrl="#" ImageUrl="~/Content/images/Actions_Home.svg" />
+  <item Text="Calendar" NavigateUrl="#" ImageUrl="~/Content/images/Actions_Calendar.svg"  />
+  <item Text="Clock" NavigateUrl="#" ImageUrl="~/Content/images/Actions_Clock.svg"  />
+  <item Text="Database" NavigateUrl="#" ImageUrl="~/Content/images/Actions_Database.svg"  />
+  <item Text="Email" NavigateUrl="#" ImageUrl="~/Content/images/Actions_EnvelopeClose.svg"  />
+  <item Text="Filter" NavigateUrl="#" ImageUrl="~/Content/images/Actions_Filter.svg"  />
+  <item Text="List" NavigateUrl="#" ImageUrl="~/Content/images/Actions_List.svg"  />
+  <item Text="Options" NavigateUrl="#" ImageUrl="~/Content/images/Actions_Options.svg"  />
+  <item Text="Table" NavigateUrl="#" ImageUrl="~/Content/images/Actions_Table.svg"  />
+  <item Text="Trash" NavigateUrl="#" ImageUrl="~/Content/images/Actions_Trash.svg"  />
+  <item Text="Bank" NavigateUrl="#" ImageUrl="~/Content/images/Business_Bank.svg"  />
+  <item Text="Calculator" NavigateUrl="#" ImageUrl="~/Content/images/Business_Calculator.svg"  />
+</items>

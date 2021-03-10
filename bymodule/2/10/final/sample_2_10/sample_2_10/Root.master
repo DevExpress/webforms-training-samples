@@ -1,0 +1,143 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Root.master.cs" Inherits="sample_2_10.Root" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server" enableviewstate="false">
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <style>
+        html, body, .demo-form {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+        }
+
+        .demo-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .demo-header {
+            padding: 10px 0;
+            width: 100%;
+        }
+
+        .demo-contentcontainer {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            width: 100%;
+        }
+
+        .demo-leftPanel {
+            padding: 10px;
+        }
+
+        .demo-content {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            gap: 10px;
+            width: 100%;
+        }
+    </style>
+
+    <asp:ContentPlaceHolder runat="server" ID="Head"></asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server" class="demo-form">
+        <div class="demo-container">
+            <div class="demo-header">
+                <dx:ASPxMenu runat="server" ID="applicationMenu" ItemAutoWidth="true" ItemWrap="false" SeparatorWidth="0"
+                    Width="100%" SyncSelectionMode="CurrentPath">
+                    <SettingsAdaptivity Enabled="True" EnableCollapseRootItemsToIcons="True" />
+                    <ItemImage Height="24px" Width="24px" />
+                    <ItemStyle VerticalAlign="Middle" />
+                    <Items>
+                        <dx:MenuItem NavigateUrl="~/default.aspx" Text="Home" Image-Url="~/Content/images/Actions_Home.svg">
+                        </dx:MenuItem>
+                        <dx:MenuItem NavigateUrl="~/EventsList.aspx" Text="Event List" Image-Url="~/Content/images/Actions_Calendar.svg">
+                        </dx:MenuItem>
+                        <dx:MenuItem NavigateUrl="~/BookEvents.aspx" Text="Submit Event Request" Image-Url="~/Content/images/Actions_EnvelopeClose.svg">
+                        </dx:MenuItem>
+                        <dx:MenuItem Text="Back Office" Image-Url="~/Content/images/Backoffice.svg">
+                            <SubMenuItemImage Height="24px" Width="24px" />
+                            <Items>
+                                <dx:MenuItem NavigateUrl="~/admin/default.aspx" Text="Dashboard" Image-Url="~/Content/images/Business_PieChart.svg">
+                                </dx:MenuItem>
+                                <dx:MenuItem NavigateUrl="~/admin/VenuesRooms.aspx" Text="Venues &amp; Rooms" Image-Url="~/Content/images/Business_Bank.svg">
+                                </dx:MenuItem>
+                                <dx:MenuItem NavigateUrl="~/admin/PivotOverview.aspx" Text="Pivot Overview" Image-Url="~/Content/images/Actions_Table.svg">
+                                </dx:MenuItem>
+                                <dx:MenuItem NavigateUrl="~/admin/BookingsReportViewer.aspx" Text="Bookings Report (Preview)" Image-Url="~/Content/images/Business_Report.svg">
+                                </dx:MenuItem>
+                                <dx:MenuItem NavigateUrl="~/admin/BookingsReportDesigner.aspx" Text="Bookings Report (Designer)" Image-Url="~/Content/images/Report_Edit.svg">
+                                </dx:MenuItem>
+                            </Items>
+                        </dx:MenuItem>
+                    </Items>
+                </dx:ASPxMenu>
+            </div>
+
+            <div class="demo-contentcontainer">
+                <div class="demo-leftPanel">
+                    <dx:ASPxPanel runat="server" ID="LeftPanel" ClientInstanceName="leftPanel" Collapsible="true" ScrollBars="Auto"
+                        Width="280px">
+                        <SettingsCollapsing ExpandButton-GlyphType="Strips" ExpandEffect="PopupToRight" />
+                        <SettingsAdaptivity CollapseAtWindowInnerWidth="960" />
+                        <PanelCollection>
+                            <dx:PanelContent runat="server">
+                                <dx:ASPxNavBar ID="ASPxNavBar1" runat="server" EnableAnimation="True" Width="100%"
+                                    SyncSelectionMode="CurrentPath">
+                                    <ItemImage Height="24px" Width="24px" />
+                                    <Groups>
+                                        <dx:NavBarGroup Expanded="true" Text="Public Site">
+                                            <Items>
+                                                <dx:NavBarItem NavigateUrl="~/default.aspx" Text="Home" Image-Url="~/Content/images/Actions_Home.svg">
+                                                </dx:NavBarItem>
+                                                <dx:NavBarItem NavigateUrl="~/EventsList.aspx" Text="Events List" Image-Url="~/Content/images/Actions_Calendar.svg">
+                                                </dx:NavBarItem>
+                                                <dx:NavBarItem NavigateUrl="~/BookEvents.aspx" Text="Submit Event Request" Image-Url="~/Content/images/Actions_EnvelopeClose.svg">
+                                                </dx:NavBarItem>
+                                            </Items>
+                                        </dx:NavBarGroup>
+                                        <dx:NavBarGroup Expanded="true" Text="Back Office">
+                                            <Items>
+                                                <dx:NavBarItem NavigateUrl="~/admin/default.aspx" Text="Dashboard" Image-Url="~/Content/images/Business_PieChart.svg">
+                                                </dx:NavBarItem>
+                                                <dx:NavBarItem NavigateUrl="~/admin/VenuesRooms.aspx" Text="Venues &amp; Rooms" Image-Url="~/Content/images/Business_Bank.svg">
+                                                </dx:NavBarItem>
+                                                <dx:NavBarItem NavigateUrl="~/admin/PivotOverview.aspx" Text="Pivot Overview" Image-Url="~/Content/images/Actions_Table.svg">
+                                                </dx:NavBarItem>
+                                                <dx:NavBarItem NavigateUrl="~/admin/BookingsReportViewer.aspx" Text="Bookings Report (Preview)" Image-Url="~/Content/images/Business_Report.svg">
+                                                </dx:NavBarItem>
+                                                <dx:NavBarItem NavigateUrl="~/admin/BookingsReportDesigner.aspx" Text="Bookings Report (Designer)" Image-Url="~/Content/images/Report_Edit.svg">
+                                                </dx:NavBarItem>
+                                            </Items>
+                                        </dx:NavBarGroup>
+                                        <dx:NavBarGroup Expanded="true" ShowExpandButton="False" Text=" " AllowExpanding="False" HeaderStyle-BackColor="#EEEEEE">
+                                            <HeaderTemplate></HeaderTemplate>
+                                            <ContentTemplate>
+                                                <div style="text-align: center; padding: 10px 0; font-weight: bold;">
+                                                    ASP.NET WebForms Training by DevExpress
+                                                </div>
+                                            </ContentTemplate>
+                                        </dx:NavBarGroup>
+                                    </Groups>
+                                </dx:ASPxNavBar>
+                            </dx:PanelContent>
+                        </PanelCollection>
+                    </dx:ASPxPanel>
+                </div>
+                <div class="demo-content" id="pageContent">
+                    <asp:ContentPlaceHolder runat="server" ID="PageContent"></asp:ContentPlaceHolder>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>

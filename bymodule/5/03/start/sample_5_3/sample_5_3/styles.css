@@ -1,0 +1,83 @@
+﻿.placeholder {
+    width: 250px;
+    height: 120px;
+    border: 1px solid grey;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 10px;
+}
+
+.type1 {
+    background-color: #f6fff1;
+}
+
+.type2 {
+    background-color: #d2d0ff;
+}
+
+.type1::after {
+    content: "Content Placeholder 1";
+}
+
+.type2::after {
+    content: "Content Placeholder 2";
+}
+
+.type-expandbar {
+    background-color: #abfea8;
+    width: 120px;
+    height: 250px;
+}
+
+    .type-expandbar > span {
+        transform: rotate(90deg);
+    }
+
+.type-menu {
+    background-color: #fffdc0;
+    margin: 0;
+    width: 100%;
+    height: 40px;
+    font-family: Courier New, Courier, monospace;
+    font-size: larger;
+}
+
+.type-menu::after {
+    content: "MENU PLACEHOLDER";
+}
+
+html, body, form {
+    width: 100%;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    border: none;
+    gap: 2px;
+}
+
+.cell {
+    border: 3px solid green;
+}
+
+.left {
+    border-color: coral;
+}
+
+.right {
+    border-color: cornflowerblue;
+}
+
+.content {
+    padding: 8px;
+}
+
+    .content::after {
+        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque facilisis sagittis nulla sit amet tincidunt. Donec in ultrices leo, non sagittis mi. Nullam sit amet sagittis dolor. Suspendisse dictum egestas ipsum vel tincidunt. Vivamus tempor dui in libero dictum, non vulputate sem iaculis. Nullam at fringilla elit. In nec augue auctor, blandit augue a, mollis eros. Pellentesque imperdiet enim sed orci lobortis imperdiet. Duis pretium mattis sapien. Nunc lacus justo, egestas a mi et, sollicitudin posuere ante. Aliquam eget risus ac lectus consectetur ornare. Donec vel tempus odio. Quisque sed elementum ante. Quisque hendrerit eu velit ut ultricies. Maecenas scelerisque est id lobortis dignissim. Duis posuere maximus commodo. Morbi in nisi elementum, consectetur augue non, auctor dolor. Praesent venenatis, metus sit amet efficitur finibus, quam erat convallis orci, in sodales nisl nibh vel leo. Etiam at lacinia mauris. Aenean sodales nunc dolor, vel varius urna consequat "
+    }

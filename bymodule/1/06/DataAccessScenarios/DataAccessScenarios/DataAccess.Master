@@ -1,0 +1,55 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="DataAccess.master.cs"
+    Inherits="DataAccessScenarios.DataAccess" %>
+
+<%@ Register Assembly="DevExpress.Web.v20.1, Version=20.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+    Namespace="DevExpress.Web" TagPrefix="dxnb" %>
+
+<!DOCTYPE html>
+<html>
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+    <style type="text/css">
+        .dxnbControl {
+            padding-top: 0px;
+        }
+
+        #form1 {
+            display: flex;
+        }
+
+        #main {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div id="left">
+            <dxnb:ASPxNavBar ID="ASPxNavBar1" runat="server" Width="200px">
+                <Groups>
+                    <dxnb:NavBarGroup Name="scenariosGroup" Text="Scenarios">
+                        <Items>
+                            <dxnb:NavBarItem Name="adoNetItem" NavigateUrl="adonet.aspx" Text="ADO.NET">
+                            </dxnb:NavBarItem>
+                            <dxnb:NavBarItem Name="entityFrameworkItem" NavigateUrl="entityframework.aspx" Text="Entity Framework">
+                            </dxnb:NavBarItem>
+                            <dxnb:NavBarItem Name="entityFrameworkServerModeItem" NavigateUrl="entityframeworkServerMode.aspx" Text="Entity Framework (Server Mode)">
+                            </dxnb:NavBarItem>
+                            <dxnb:NavBarItem Name="xpoItem" NavigateUrl="xpo.aspx" Text="XPO">
+                            </dxnb:NavBarItem>
+                            <dxnb:NavBarItem Name="xpoServerModeItem" NavigateUrl="xpoServerMode.aspx" Text="XPO (Server Mode)">
+                            </dxnb:NavBarItem>
+                        </Items>
+                    </dxnb:NavBarGroup>
+                </Groups>
+            </dxnb:ASPxNavBar>
+        </div>
+        <div id="main">
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+    </form>
+</body>
+</html>

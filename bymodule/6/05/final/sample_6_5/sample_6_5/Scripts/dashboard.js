@@ -1,4 +1,4 @@
-﻿$(function () {
+﻿ASPxClientControl.GetControlCollection().ControlsInitialized.AddHandler(function () {
     $('#eventGauge').dxCircularGauge({
         value: eventCount,
         title: 'Events (Current Year)',
@@ -22,7 +22,7 @@
                 { color: '#ff0000', startValue: endGreenRange, endValue: endValue },
             ],
         },
-    })
+    });
 
     $('#capReqGauge').dxBarGauge({
         values: [capReqCount, roomBookingCount],

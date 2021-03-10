@@ -2,10 +2,10 @@
     CodeBehind="EventsList.aspx.cs"
     Inherits="sample_4_4.EventsList" %>
 
-<%@ Register Assembly="DevExpress.Web.ASPxScheduler.v20.1, Version=20.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Web.ASPxScheduler.v20.2, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Web.ASPxScheduler" TagPrefix="dxwschs" %>
 
-<%@ Register Assembly="DevExpress.Xpo.v20.1, Version=20.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Xpo.v20.2, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Xpo" TagPrefix="dx" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="Head" runat="server">
@@ -76,6 +76,7 @@
             AllowAppointmentDragBetweenResources="None" AllowAppointmentEdit="None"
             AllowAppointmentResize="None" AllowDisplayAppointmentDependencyForm="Never"
             AllowDisplayAppointmentForm="Never" AllowInplaceEditor="None" />
+        <OptionsBehavior ShowFloatingActionButton="false" />
         <OptionsToolTips ShowAppointmentToolTip="False" />
     </dxwschs:ASPxScheduler>
 </asp:Content>

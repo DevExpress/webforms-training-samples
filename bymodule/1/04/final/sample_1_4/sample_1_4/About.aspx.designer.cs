@@ -7,9 +7,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+
 namespace sample_1_4 {
-
-
   public partial class About {
   }
 }

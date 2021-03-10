@@ -1,4 +1,4 @@
-// Type definitions for DevExpress ASP.NET 20.1
+// Type definitions for DevExpress ASP.NET 20.2
 // Project: https://devexpress.com/
 // Definitions by: DevExpress Inc. <https://devexpress.com/>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
@@ -44,13 +44,25 @@ declare class ASPxClientDiagram extends ASPxClientControl {
 	 */
 	CustomShapeCreateTemplate: ASPxClientEvent<ASPxClientDiagramCustomShapeCreateTemplateEventHandler<ASPxClientDiagram>>;
 	/**
+	 * Allows you to create a template for custom shapes in the toolbox.
+	 */
+	CustomShapeCreateToolboxTemplate: ASPxClientEvent<ASPxClientDiagramCustomShapeCreateTemplateEventHandler<ASPxClientDiagram>>;
+	/**
 	 * Fires after a diagram model's data (mapped to a data source) is changed and the client-server synchronization starts to apply the change on the server.
 	 */
 	BeginSynchronization: ASPxClientEvent<ASPxClientEventHandler<ASPxClientDiagram>>;
 	/**
-	 * Fires after a diagram model's data change is applied to the server and server and client document models have been synchronized.
+	 * Fires after a diagram model's data change is applied to the server (the server and client document models have been synchronized).
 	 */
 	EndSynchronization: ASPxClientEvent<ASPxClientEventHandler<ASPxClientDiagram>>;
+	/**
+	 * Allows you to prohibit an edit operation at run time.
+	 */
+	RequestEditOperation: ASPxClientEvent<ASPxClientDiagramRequestEditOperationEventHandler<ASPxClientDiagram>>;
+	/**
+	 * Focuses the Diagram control.
+	 */
+	Focus(): void;
 	/**
 	 * Imports the diagram data.
 	 * @param data The diagram data in JSON format.
@@ -76,6 +88,17 @@ declare class ASPxClientDiagram extends ASPxClientControl {
 	 * @param readOnly true to make the diagram read-only; otherwise, false.
 	 */
 	SetReadOnly(readOnly: boolean): void;
+	GetReadOnly(): boolean;
+	/**
+	 * Returns a shape or connector object specified by its key. The DiagramShape or DiagramConnector object with the specified key.
+	 * @param key The item key.
+	 */
+	GetItemByKey(key: any): DiagramItem;
+	/**
+	 * Returns a shape or connector object specified by its internal identifier. The DiagramShape or DiagramConnector object with the specified identifier.
+	 * @param id The item identifier.
+	 */
+	GetItemById(id: string): DiagramItem;
 }
 /**
  * A method that will handle the ItemClick and ItemDblClick events.
@@ -93,7 +116,7 @@ declare class ASPxClientDiagramItemClickEventArgs extends ASPxClientEventArgs {
 	 */
 	constructor(item: DiagramItem);
 	/**
-	 * Gets an object that provides information about an item (shape or connector) related to the event.
+	 * Gets an object that provides information about an item (DiagramShape or DiagramConnector) related to the event.
 	 */
 	item: DiagramItem;
 }
@@ -113,7 +136,7 @@ declare class ASPxClientDiagramSelectionChangedEventArgs extends ASPxClientEvent
 	 */
 	constructor(items: DiagramItem[]);
 	/**
-	 * Gets an array of the selected items (shapes or connectors).
+	 * Gets an array of the selected items (DiagramShape or DiagramConnector objects).
 	 */
 	items: DiagramItem[];
 }
@@ -134,13 +157,283 @@ declare class ASPxClientDiagramCustomShapeCreateTemplateEventArgs extends ASPxCl
 	 */
 	constructor(container: any, item: DiagramShape);
 	/**
-	 * Returns a container for an instance of the template.
+	 * Returns the template's container.
 	 */
 	container: any;
 	/**
 	 * Gets the currently processed diagram item.
 	 */
 	item: DiagramShape;
+}
+/**
+ * A method that handles the client RequestEditOperation event.
+ * @param source The event's source.
+ * @param e An object that contains event data.
+ */
+interface ASPxClientDiagramRequestEditOperationEventHandler<Sender> { (source: Sender, e: ASPxClientDiagramRequestEditOperationEventArgs): void; }
+/**
+ * Provides data for the RequestEditOperation event.
+ */
+declare class ASPxClientDiagramRequestEditOperationEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramRequestEditOperationEventArgs class with specified settings.
+	 * @param operation The operation.
+	 * @param allowed true to allow the operation to be processed; otherwise, false.
+	 * @param updateUI true if the event is raised by a UI update; false if the event is raised by a user action.
+	 * @param args An object that contains information about the edit operation being processed.
+	 */
+	constructor(operation: DiagramEditOperation, allowed: boolean, updateUI: boolean, args: any);
+	/**
+	 * Identifies the operation currently being processed.
+	 */
+	operation: DiagramEditOperation;
+	/**
+	 * Specifies whether the edit operation is allowed.
+	 */
+	allowed: boolean;
+	/**
+	 * Identifies the reason why the event is raised.
+	 */
+	updateUI: boolean;
+	/**
+	 * Contains information about the processed shape or connector.
+	 */
+	args: any;
+}
+/**
+ * Contains information about the processed shape.
+ */
+declare class ASPxClientDiagramAddShapeEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramAddShapeEventArgs class with specified settings.
+	 * @param shape The shape object.
+	 * @param position An object that contains the shape coordinates.
+	 */
+	constructor(shape: DiagramShape, position: any);
+	/**
+	 * The processed shape.
+	 */
+	shape: DiagramShape;
+	/**
+	 * A position (x- and y-coordinates) where the shape is being added.
+	 */
+	position: any;
+}
+/**
+ * Contains information about the processed shape.
+ */
+declare class ASPxClientDiagramAddShapeFromToolboxEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramAddShapeFromToolboxEventArgs class with specified settings.
+	 * @param type The type of the processed shape.
+	 */
+	constructor(type: string);
+	/**
+	 * The type of the processed shape.
+	 */
+	type: string;
+}
+/**
+ * Contains information about the processed shape.
+ */
+declare class ASPxClientDiagramDeleteShapeEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramDeleteShapeEventArgs class with specified settings.
+	 * @param shape The shape object.
+	 */
+	constructor(shape: DiagramShape);
+	/**
+	 * The processed shape.
+	 */
+	shape: DiagramShape;
+}
+/**
+ * Contains information about the processed connector.
+ */
+declare class ASPxClientDiagramDeleteConnectorEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramDeleteConnectorEventArgs class with specified settings.
+	 * @param connector The connector object.
+	 */
+	constructor(connector: DiagramConnector);
+	/**
+	 * The processed connector.
+	 */
+	connector: DiagramConnector;
+}
+/**
+ * Contains information about the processed connection.
+ */
+declare class ASPxClientDiagramChangeConnectionEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramChangeConnectionEventArgs class with specified settings.
+	 */
+	constructor(newShape: DiagramShape, oldShape: DiagramShape, connector: DiagramConnector, connectionPointIndex: number, connectorPosition: string);
+	/**
+	 * The new connected shape.
+	 */
+	newShape: DiagramShape;
+	/**
+	 * The previous connected shape.
+	 */
+	oldShape: DiagramShape;
+	/**
+	 * The processed connector.
+	 */
+	connector: DiagramConnector;
+	/**
+	 * The index of the processed point in the shape's connection point collection.
+	 */
+	connectionPointIndex: number;
+	/**
+	 * The position of the connector in the processed point.
+	 */
+	position: string;
+}
+/**
+ * Contains information about the processed connector.
+ */
+declare class ASPxClientDiagramChangeConnectorPointsEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramChangeConnectorPointsEventArgs class with specified settings.
+	 * @param connector The connector object.
+	 * @param newPoints The array of new connector points.
+	 * @param oldPoints The array of previous connection points.
+	 */
+	constructor(connector: DiagramConnector, newPoints: any[], oldPoints: any[]);
+	/**
+	 * The processed connector.
+	 */
+	connector: DiagramConnector;
+	/**
+	 * The array of new connector points.
+	 */
+	newPoints: any[];
+	/**
+	 * The array of previous connection points.
+	 */
+	oldPoints: any[];
+}
+/**
+ * Contains information about the processed shape.
+ */
+declare class ASPxClientDiagramBeforeChangeShapeTextEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramBeforeChangeShapeTextEventArgs class with specified settings.
+	 * @param shape The shape object.
+	 */
+	constructor(shape: DiagramShape);
+	/**
+	 * The processed shape.
+	 */
+	shape: DiagramShape;
+}
+/**
+ * Contains information about the processed shape.
+ */
+declare class ASPxClientDiagramChangeShapeTextEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramChangeShapeTextEventArgs class with specified settings.
+	 * @param shape The shape object.
+	 * @param text The new shape text.
+	 */
+	constructor(shape: DiagramShape, text: string);
+	/**
+	 * The processed shape.
+	 */
+	shape: DiagramShape;
+	/**
+	 * The new shape text.
+	 */
+	text: string;
+}
+/**
+ * Contains information about the processed connector.
+ */
+declare class ASPxClientDiagramBeforeChangeConnectorTextEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramBeforeChangeConnectorTextEventArgs class with specified settings.
+	 * @param connector The connector object.
+	 * @param index The index of the processed text in the connector's texts collection.
+	 */
+	constructor(connector: DiagramConnector, index: number);
+	/**
+	 * The processed connector.
+	 */
+	connector: DiagramConnector;
+	/**
+	 * The index of the processed text in the connector's texts collection.
+	 */
+	index: number;
+}
+/**
+ * Contains information about the processed connector.
+ */
+declare class ASPxClientDiagramChangeConnectorTextEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramChangeConnectorTextEventArgs class with specified settings.
+	 * @param connector The connector object.
+	 * @param index The index of the processed text in the connector's texts collection.
+	 * @param text The new connector text.
+	 */
+	constructor(connector: DiagramConnector, index: number, text: string);
+	/**
+	 * The processed connector.
+	 */
+	connector: DiagramConnector;
+	/**
+	 * The index of the processed text in the connector's texts collection.
+	 */
+	index: number;
+	/**
+	 * The new connector text.
+	 */
+	text: string;
+}
+/**
+ * Contains information about the processed shape.
+ */
+declare class ASPxClientDiagramResizeShapeEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramResizeShapeEventArgs class with specified settings.
+	 * @param shape The shape object.
+	 * @param newSize An object that contains the new shape size.
+	 * @param oldSize An object that contains the previous shape size.
+	 */
+	constructor(shape: DiagramShape, newSize: any, oldSize: any);
+	/**
+	 * The processed shape.
+	 */
+	shape: DiagramShape;
+	/**
+	 * The new shape size in units.
+	 */
+	newSize: any;
+	/**
+	 * The previous shape size in units.
+	 */
+	oldSize: any;
+}
+/**
+ * Contains information about the processed shape.
+ */
+declare class ASPxClientDiagramMoveShapeEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientDiagramMoveShapeEventArgs class with specified settings.
+	 */
+	constructor(shape: DiagramShape, newPosition: any, oldPosition: any);
+	/**
+	 * The processed shape.
+	 */
+	shape: DiagramShape;
+	/**
+	 * The new shape position (x- and y-coordinates).
+	 */
+	newPosition: any;
+	/**
+	 * The previous shape position (x- and y-coordinates).
+	 */
+	oldPosition: any;
 }
 /**
  * Provides information about an item (shape or connector).
@@ -171,6 +464,18 @@ declare class DiagramShape extends DiagramItem {
 	 * Gets the shape type.
 	 */
 	type: string;
+	/**
+	 * Specifies the shape position (x- and y-coordinates) in units.
+	 */
+	position: any;
+	/**
+	 * Specifies the shape size in units.
+	 */
+	size: any;
+	/**
+	 * Gets an array of attached connector identifiers.
+	 */
+	attachedConnectorIds: string[];
 }
 /**
  * Provides information about a connector.
@@ -188,6 +493,79 @@ declare class DiagramConnector extends DiagramItem {
 	 * Gets the connector's end node key.
 	 */
 	toKey: any;
+	/**
+	 * Gets the connector's start node identifier.
+	 */
+	fromId: string;
+	/**
+	 * The index of a shape connection point where the connector starts.
+	 */
+	fromPointIndex: number;
+	/**
+	 * Gets the connector's end node identifier.
+	 */
+	toId: string;
+	/**
+	 * The index of the shape connection point where the connector ends.
+	 */
+	toPointIndex: number;
+	/**
+	 * Gets the connector's key points.
+	 */
+	points: any[];
+}
+/**
+ * Declares client constants that identify diagram edit operations.
+ */
+declare class DiagramEditOperation {
+	/**
+	 * Identifies the AddShape operation.
+	 */
+	static readonly AddShape: string;
+	/**
+	 * Identifies the AddShapeFromToolbox operation.
+	 */
+	static readonly AddShapeFromToolbox: string;
+	/**
+	 * Identifies the DeleteShape operation.
+	 */
+	static readonly DeleteShape: string;
+	/**
+	 * Identifies the DeleteConnector operation.
+	 */
+	static readonly DeleteConnector: string;
+	/**
+	 * Identifies the ChangeConnection operation.
+	 */
+	static readonly ChangeConnection: string;
+	/**
+	 * Identifies the ChangeConnectorPoints operation.
+	 */
+	static readonly ChangeConnectorPoints: string;
+	/**
+	 * Identifies the BeforeChangeShapeText operation.
+	 */
+	static readonly BeforeChangeShapeText: string;
+	/**
+	 * Identifies the ChangeShapeText operation.
+	 */
+	static readonly ChangeShapeText: string;
+	/**
+	 * Identifies the BeforeChangeConnectorText operation.
+	 */
+	static readonly BeforeChangeConnectorText: string;
+	/**
+	 * Identifies the ChangeConnectorText operation.
+	 */
+	static readonly ChangeConnectorText: string;
+	/**
+	 * Identifies the ResizeShape operation.
+	 */
+	static readonly ResizeShape: string;
+	/**
+	 * Identifies the MoveShape operation.
+	 */
+	static readonly MoveShape: string;
 }
 /**
  * Lists built-in shapes' types.
@@ -334,7 +712,7 @@ declare enum DiagramShapeType {
 	 */
 	Merge = 34,
 	/**
-	 * The connector.
+	 * 
 	 */
 	Connector = 35,
 	/**
@@ -2525,13 +2903,16 @@ declare class ASPxClientPivotMenuItemClickEventArgs extends ASPxClientEventArgs 
 	 */
 	MenuItemName: string;
 	/**
-	 * Gets the field's unique indentifier.
+	 * Gets the field's unique identifier.
 	 */
 	FieldID: string;
 	/**
 	 * Gets the index of the field value for which the popup menu has been invoked.
 	 */
 	FieldValueIndex: number;
+	/**
+	 * Gets the field's area.
+	 */
 	Area: string;
 }
 /**
@@ -9852,12 +10233,11 @@ declare class ASPxClientRichEditContentRemovedEventArgs extends ASPxClientEventA
 	 * Gets the text buffer interval related to the removed content.
 	 */
 	interval: Interval;
+	removedText: string;
 	/**
-	 * Initializes a new instance of the ASPxClientRichEditContentRemovedEventArgs object. For internal use only.
-	 * @param subDocumentId An identifier of a sub-document that contained the removed content.
-	 * @param interval An interval object that relates to the removed content.
+	 * Initializes a new instance of the ASPxClientRichEditContentRemovedEventArgs class with specified settings.
 	 */
-	constructor(subDocumentId: number, interval: Interval);
+	constructor(subDocumentId: number, interval: Interval, removedText: string);
 }
 /**
  * Provides data for the ASPxClientRichEdit.CustomCommandExecuted event.
@@ -14087,7 +14467,7 @@ declare class ASPxClientTreeListBatchEditStartEditingEventArgs extends ASPxClien
 	 */
 	nodeKey: string;
 	/**
-	 * Gets the tree list column that owns a cell that is about to be edited.
+	 * Gets the column to which the edited cell belongs.
 	 */
 	focusedColumn: ASPxClientTreeListColumn;
 	/**
@@ -14113,6 +14493,9 @@ declare class ASPxClientTreeListBatchEditEndEditingEventArgs extends ASPxClientC
 	 * Gets the processed node's key value.
 	 */
 	nodeKey: string;
+	/**
+	 * Gets the column to which the edited cell belongs.
+	 */
 	focusedColumn: ASPxClientTreeListColumn;
 	/**
 	 * Gets the value of the processed cell.
@@ -14641,7 +15024,7 @@ declare class ASPxClientCancelEventArgs extends ASPxClientEventArgs {
 	 */
 	constructor();
 	/**
-	 * Gets or sets a value indicating whether the action which raised the event should be canceled.
+	 * Specifies whether to cancel the related action (for example, row edit, export).
 	 */
 	cancel: boolean;
 }
@@ -17085,8 +17468,8 @@ declare class ASPxClientHint extends ASPxClientControl {
 	static Register(targetSelector: string, options: ASPxClientHintOptions | string | ASPxClientEvent<ASPxClientHintShowingEventHandler>): ASPxClientHint;
 	/**
 	 * Invokes a hint.
-	 * @param targetSelector A string value that is the CSS selector.
-	 * @param options An ASPxClientHintOptions object that is the hint's options.
+	 * @param targetSelector The CSS selector.
+	 * @param options The options of the hint.
 	 */
 	static Show(targetSelector: string | any | ASPxClientHintOptions, options?: ASPxClientHintOptions | string): void;
 	/**
@@ -22233,7 +22616,7 @@ declare class ASPxClientEdit extends ASPxClientEditBase {
 	 */
 	ValueChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientEdit>>;
 	/**
-	 * Returns an HTML element that represents the control's input element.
+	 * Returns an HTML element that is the control's input element.
 	 */
 	GetInputElement(): any;
 	/**
@@ -23178,7 +23561,7 @@ declare class ASPxClientTextEdit extends ASPxClientEdit {
 	 */
 	TextChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientTextEdit>>;
 	/**
-	 * Fires on the client side when the editor's input value is changed before the focus moves out of the editor by end-user interactions.
+	 * Fires on the client each time a user changes an editor's input value.
 	 */
 	UserInput: ASPxClientEvent<ASPxClientEventHandler<ASPxClientTextEdit>>;
 	/**
@@ -24671,6 +25054,9 @@ declare class ASPxClientCardViewBatchEditEndEditingEventArgs extends ASPxClientC
 	 * Gets the visible index of the card whose cells have been edited.
 	 */
 	visibleIndex: number;
+	/**
+	 * Gets the column to which the edited cell belongs.
+	 */
 	focusedColumn: ASPxClientCardViewColumn;
 	/**
 	 * Gets a hashtable that maintains information about editable cells.
@@ -26094,6 +26480,9 @@ declare class ASPxClientGridViewBatchEditEndEditingEventArgs extends ASPxClientC
 	 * Gets the visible index of the row whose cells has been edited.
 	 */
 	visibleIndex: number;
+	/**
+	 * Gets the column to which the edited cell belongs.
+	 */
 	focusedColumn: ASPxClientGridViewColumn;
 	/**
 	 * Gets a hashtable that maintains information about editable cells.
@@ -27117,6 +27506,9 @@ declare class ASPxClientVerticalGridBatchEditEndEditingEventArgs extends ASPxCli
 	 * Gets the visible index of the record whose cells have been edited.
 	 */
 	visibleIndex: number;
+	/**
+	 * Gets the row to which the edited cell belongs.
+	 */
 	focusedRow: ASPxClientVerticalGridRow;
 	/**
 	 * Gets a hashtable that maintains information about editable cells.
@@ -30422,7 +30814,589 @@ declare class ASPxClientGanttCustomCommandEventArgs extends ASPxClientEventArgs 
 	parameter: any;
 }
 /**
- * A client-side equivalent of the DevExpress.Web.ASPxGantt control.
+ * A method that handles the ContextMenuCustomization event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttContextMenuCustomizationEventHandler<Sender> { (source: Sender, e: ASPxClientGanttContextMenuCustomizationEventArgs): void; }
+/**
+ * Contains data for the ContextMenuCustomization event.
+ */
+declare class ASPxClientGanttContextMenuCustomizationEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttContextMenuCustomizationEventArgs class with specified settings.
+	 * @param menuItems The collection of context menu items.
+	 */
+	constructor(menuItems: any);
+	/**
+	 * Gets the collection of context menu items.
+	 */
+	menuItems: ASPxClientGanttContextMenuItemCollection;
+}
+/**
+ * A context menu item.
+ */
+declare class ASPxClientGanttContextMenuItem {
+	/**
+	 * Gets the parent context menu item to which the current item belongs.
+	 */
+	parent: ASPxClientGanttContextMenuItem;
+	/**
+	 * Specifies the context menu item's name.
+	 */
+	name: string;
+	/**
+	 * Specifies the context menu item's text.
+	 */
+	text: string;
+	/**
+	 * Specifies whether the item is enabled.
+	 */
+	enabled: boolean;
+	/**
+	 * Specifies the name of the CSS class that defines the context menu item's image.
+	 */
+	imageClassName: string;
+	/**
+	 * Specifies the context menu item's navigation Url.
+	 */
+	navigateUrl: string;
+	/**
+	 * Specifies the Url of the menu item's image.
+	 */
+	imageUrl: string;
+	/**
+	 * Specifies whether an item separator is displayed before the context menu item.
+	 */
+	beginGroup: boolean;
+	/**
+	 * Specifies the context menu item's tooltip.
+	 */
+	tooltip: string;
+	/**
+	 * Gets or sets the window or frame where to locate the content of the Url associated with the current menu item.
+	 */
+	target: string;
+	/**
+	 * Returns the context menu item's subitems.
+	 */
+	GetSubItems(): ASPxClientGanttContextMenuItemCollection;
+	/**
+	 * Returns the context menu item's subitem with the specified index. The subitem.
+	 * @param index The subitem's index.
+	 */
+	GetItem(index: number): ASPxClientGanttContextMenuItem;
+	/**
+	 * Returns the context menu item's subitem with the specified name. The context menu item.
+	 * @param name The context menu item's name.
+	 */
+	GetItemByName(name: string): ASPxClientGanttContextMenuItem;
+	/**
+	 * Returns the number of the context menu item's subitems.
+	 */
+	GetItemCount(): number;
+}
+/**
+ * The context menu item collection.
+ */
+declare class ASPxClientGanttContextMenuItemCollection {
+	/**
+	 * Adds a context menu item.
+	 * @param item The context menu item.
+	 */
+	Add(item: ASPxClientGanttContextMenuItem): void;
+	/**
+	 * Removes a context menu item with the specified index from the item collection.
+	 * @param index The context menu item's index.
+	 */
+	Remove(index: number): void;
+	/**
+	 * Removes a context menu item with the specified name from the item collection.
+	 * @param name The context menu item's name.
+	 */
+	RemoveByName(name: string): void;
+	/**
+	 * Inserts a context menu item at the specified position in the collection.
+	 * @param index The context menu item's index.
+	 * @param item The context menu item.
+	 */
+	Insert(index: number, item: ASPxClientGanttContextMenuItem): void;
+	/**
+	 * Returns the number of context menu items.
+	 */
+	GetCount(): number;
+	/**
+	 * Returns a context menu item with the specified name. The context menu item.
+	 * @param name The name.
+	 */
+	GetByName(name: string): ASPxClientGanttContextMenuItem;
+	/**
+	 * Returns a context menu item with the specified index. The context menu item.
+	 * @param index The index.
+	 */
+	Get(index: number): ASPxClientGanttContextMenuItem;
+	/**
+	 * Removes predefined items from the context menu.
+	 */
+	Clear(): void;
+}
+/**
+ * A method that handles the StartCellEditing event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttStartCellEditingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttStartCellEditingEventArgs): void; }
+/**
+ * Contains data for the StartCellEditing event.
+ */
+declare class ASPxClientGanttStartCellEditingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttStartCellEditingEventArgs class with specified settings.
+	 * @param key The task key.
+	 * @param focusedFieldName The field name of the focused task.
+	 * @param values The task values.
+	 */
+	constructor(key: any, focusedFieldName: string, values: any);
+	/**
+	 * Specifies the task values.
+	 */
+	values: any;
+	/**
+	 * Specifies the task key.
+	 */
+	key: any;
+	/**
+	 * Specifies the field name of the focused task.
+	 */
+	focusedFieldName: string;
+}
+/**
+ * A method that handles the EndCellEditing event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttEndCellEditingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttEndCellEditingEventArgs): void; }
+/**
+ * Contains data for the EndCellEditing event.
+ */
+declare class ASPxClientGanttEndCellEditingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttEndCellEditingEventArgs class with specified settings.
+	 * @param key The task key.
+	 * @param focusedFieldName The field name.
+	 * @param values The values.
+	 */
+	constructor(key: any, focusedFieldName: string, values: any);
+	/**
+	 * Specifies the task values.
+	 */
+	values: any;
+	/**
+	 * Specifies the task key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the TaskInserting event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTaskInsertingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTaskInsertingEventArgs): void; }
+/**
+ * Contains data for the TaskInserting event.
+ */
+declare class ASPxClientGanttTaskInsertingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTaskInsertingEventArgs class with specified settings.
+	 * @param values The task values.
+	 */
+	constructor(values: any);
+	/**
+	 * Specifies the task values.
+	 */
+	values: any;
+}
+/**
+ * A method that handles the TaskDeleting event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTaskDeletingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTaskDeletingEventArgs): void; }
+/**
+ * Contains data for the TaskDeleting event.
+ */
+declare class ASPxClientGanttTaskDeletingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTaskDeletingEventArgs class with specified settings.
+	 * @param key The task key.
+	 * @param values The task values.
+	 */
+	constructor(key: any, values: any);
+	/**
+	 * Specifies the task values.
+	 */
+	values: any;
+	/**
+	 * Specifies the task key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the TaskUpdating event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTaskUpdatingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTaskUpdatingEventArgs): void; }
+/**
+ * Contains data for the TaskUpdating event.
+ */
+declare class ASPxClientGanttTaskUpdatingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTaskUpdatingEventArgs class with specified settings.
+	 * @param key The task key.
+	 * @param values The task values.
+	 * @param newValues The task values after update.
+	 */
+	constructor(key: any, values: any, newValues: any);
+	/**
+	 * Specifies the task's new values.
+	 */
+	newValues: any;
+	/**
+	 * Specifies the task values.
+	 */
+	values: any;
+	/**
+	 * Specifies the task key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the TaskMoving event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTaskMovingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTaskMovingEventArgs): void; }
+/**
+ * Contains data for the TaskMoving event.
+ */
+declare class ASPxClientGanttTaskMovingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTaskMovingEventArgs class with specified settings.
+	 * @param key The task key.
+	 * @param values The task values.
+	 * @param newValues The task values after moving.
+	 */
+	constructor(key: any, values: any, newValues: any);
+	/**
+	 * Specifies the task values after moving.
+	 */
+	newValues: any;
+	/**
+	 * Specifies the task values.
+	 */
+	values: any;
+	/**
+	 * Specifies the task key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the TaskEditDialogShowing event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTaskEditDialogShowingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTaskEditDialogShowingEventArgs): void; }
+/**
+ * Contains data for the TaskEditDialogShowing event.
+ */
+declare class ASPxClientGanttTaskEditDialogShowingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTaskEditDialogShowingEventArgs class with specified settings.
+	 * @param key The task key.
+	 * @param values The task values.
+	 * @param readOnlyFields An array of read-only fields.
+	 * @param hiddenFields An array of hidden fields.
+	 */
+	constructor(key: any, values: any, readOnlyFields: string[], hiddenFields: string[]);
+	/**
+	 * Specifies the task values.
+	 */
+	values: any;
+	/**
+	 * Specifies the task key.
+	 */
+	key: any;
+	/**
+	 * Specifies read-only fields in the edit dialog.
+	 */
+	readOnlyFields: string[];
+	/**
+	 * Specifies hidden fields in the edit dialog.
+	 */
+	hiddenFields: string[];
+}
+/**
+ * A method that handles the FocusedTaskChanging event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttFocusedTaskChangingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttFocusedTaskChangingEventArgs): void; }
+/**
+ * Contains data for the FocusedTaskChanging event.
+ */
+declare class ASPxClientGanttFocusedTaskChangingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Returns the task data.
+	 */
+	values: any;
+	/**
+	 * Returns the task key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the FocusedTaskChanged event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttFocusedTaskChangedEventHandler<Sender> { (source: Sender, e: ASPxClientGanttFocusedTaskChangedEventArgs): void; }
+/**
+ * Contains data for the FocusedTaskChanged event.
+ */
+declare class ASPxClientGanttFocusedTaskChangedEventArgs extends ASPxClientProcessingModeEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttFocusedTaskChangedEventArgs class with specified settings.
+	 * @param key The task key.
+	 * @param values The task data.
+	 */
+	constructor(key: any, values: any);
+	/**
+	 * Returns the task key.
+	 */
+	key: any;
+	/**
+	 * Returns the task data.
+	 */
+	values: any;
+}
+/**
+ * A method that handles the DependencyInserting event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttDependencyInsertingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttDependencyInsertingEventArgs): void; }
+/**
+ * Contains data for the DependencyInserting event.
+ */
+declare class ASPxClientGanttDependencyInsertingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttDependencyInsertingEventArgs class with specified settings.
+	 * @param values The dependency values.
+	 */
+	constructor(values: any);
+	/**
+	 * Specifies the dependency values.
+	 */
+	values: any;
+}
+/**
+ * A method that handles the DependencyDeleting event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttDependencyDeletingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttDependencyDeletingEventArgs): void; }
+/**
+ * Contains data for the DependencyDeleting event.
+ */
+declare class ASPxClientGanttDependencyDeletingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttDependencyDeletingEventArgs class with specified settings.
+	 * @param key The dependency key.
+	 * @param values The dependency values.
+	 */
+	constructor(key: any, values: any);
+	/**
+	 * Specifies the dependency values.
+	 */
+	values: any;
+	/**
+	 * Specifies the dependency key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the ResourceInserting event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttResourceInsertingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttResourceInsertingEventArgs): void; }
+/**
+ * Contains data for the ResourceInserting event.
+ */
+declare class ASPxClientGanttResourceInsertingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttResourceInsertingEventArgs class with specified settings.
+	 * @param values The resource values.
+	 */
+	constructor(values: any);
+	/**
+	 * Specifies the resource values.
+	 */
+	values: any;
+}
+/**
+ * A method that handles the ResourceDeleting event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttResourceDeletingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttResourceDeletingEventArgs): void; }
+/**
+ * Contains data for the ResourceDeleting event.
+ */
+declare class ASPxClientGanttResourceDeletingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttResourceDeletingEventArgs class with specified settings.
+	 * @param key The resource key.
+	 * @param values The resource values.
+	 */
+	constructor(key: any, values: any);
+	/**
+	 * Specifies the resource values.
+	 */
+	values: any;
+	/**
+	 * Specifies the resource key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the ResourceAssigning event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttResourceAssigningEventHandler<Sender> { (source: Sender, e: ASPxClientGanttResourceAssigningEventArgs): void; }
+/**
+ * Contains data for the ResourceAssigning event.
+ */
+declare class ASPxClientGanttResourceAssigningEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttResourceAssigningEventArgs class with specified settings.
+	 * @param values The resource values.
+	 */
+	constructor(values: any);
+	/**
+	 * Specifies resource values.
+	 */
+	values: any;
+}
+/**
+ * A method that handles the ResourceUnassigning event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttResourceUnassigningEventHandler<Sender> { (source: Sender, e: ASPxClientGanttResourceUnassigningEventArgs): void; }
+/**
+ * Contains data for the ResourceUnassigning event.
+ */
+declare class ASPxClientGanttResourceUnassigningEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttResourceUnassigningEventArgs class with specified settings.
+	 * @param key The resource key.
+	 * @param values The resource values.
+	 */
+	constructor(key: any, values: any);
+	/**
+	 * Specifies the resource values.
+	 */
+	values: any;
+	/**
+	 * Specifies the resource key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the TooltipShowing event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTooltipShowingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTooltipShowingEventArgs): void; }
+/**
+ * Provides data for the TooltipShowing event.
+ */
+declare class ASPxClientGanttTooltipShowingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTooltipShowingEventArgs class with specified settings.
+	 * @param container A container for the tooltip.
+	 * @param task The task.
+	 */
+	constructor(container: any, task: any);
+	/**
+	 * Returns the processed task.
+	 */
+	task: any;
+	/**
+	 * Returns a container for an instance of the tooltip.
+	 */
+	container: any;
+}
+/**
+ * A method that handles task-related events.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTaskEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTaskEventArgs): void; }
+/**
+ * Provides data for the TaskClick and TaskDblClick events.
+ */
+declare class ASPxClientGanttTaskEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTaskEventArgs class with specified settings.
+	 * @param key The task key.
+	 * @param values The task data.
+	 * @param htmlEvent Event parameters.
+	 */
+	constructor(key: any, values: any, htmlEvent: any);
+	/**
+	 * Returns the task data.
+	 */
+	values: any;
+	/**
+	 * Returns the task key.
+	 */
+	key: any;
+	/**
+	 * Provides access to the parameters associated with the TaskClick and TaskDblClick events.
+	 */
+	htmlEvent: any;
+}
+/**
+ * A method that handles the ContextMenu event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttContextMenuEventHandler<Sender> { (source: Sender, e: ASPxClientGanttContextMenuEventArgs): void; }
+/**
+ * Contains data for the ContextMenu event.
+ */
+declare class ASPxClientGanttContextMenuEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttContextMenuEventArgs class with specified settings.
+	 * @param objectInfo Information about the right-clicked object.
+	 * @param htmlEvent The DHTML event object related to the processed event.
+	 */
+	constructor(objectInfo: any, htmlEvent: any);
+	/**
+	 * Gets information about the right-clicked object.
+	 */
+	objectInfo: any;
+	/**
+	 * Gets the DHTML event object that contains information about the processed event.
+	 */
+	htmlEvent: any;
+}
+/**
+ * A client-side equivalent of the ASPxGantt control.
  */
 declare class ASPxClientGantt extends ASPxClientControl {
 	/**
@@ -30441,6 +31415,86 @@ declare class ASPxClientGantt extends ASPxClientControl {
 	 * Enables you to implement a custom command's logic.
 	 */
 	CustomCommand: ASPxClientEvent<ASPxClientGanttCustomCommandEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before the built-in context menu is rendered.
+	 */
+	ContextMenuCustomization: ASPxClientEvent<ASPxClientGanttContextMenuCustomizationEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user starts to edit a cell.
+	 */
+	StartCellEditing: ASPxClientEvent<ASPxClientGanttStartCellEditingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user finishes editing a cell.
+	 */
+	EndCellEditing: ASPxClientEvent<ASPxClientGanttEndCellEditingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user inserts a task.
+	 */
+	TaskInserting: ASPxClientEvent<ASPxClientGanttTaskInsertingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user deletes a task.
+	 */
+	TaskDeleting: ASPxClientEvent<ASPxClientGanttTaskDeletingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user updates a task.
+	 */
+	TaskUpdating: ASPxClientEvent<ASPxClientGanttTaskUpdatingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user moves a task.
+	 */
+	TaskMoving: ASPxClientEvent<ASPxClientGanttTaskMovingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before the edit dialog is shown.
+	 */
+	TaskEditDialogShowing: ASPxClientEvent<ASPxClientGanttTaskEditDialogShowingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a task is focused.
+	 */
+	FocusedTaskChanging: ASPxClientEvent<ASPxClientGanttFocusedTaskChangingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs when a task is focused.
+	 */
+	FocusedTaskChanged: ASPxClientEvent<ASPxClientGanttFocusedTaskChangedEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user inserts a dependency.
+	 */
+	DependencyInserting: ASPxClientEvent<ASPxClientGanttDependencyInsertingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user deletes a dependency.
+	 */
+	DependencyDeleting: ASPxClientEvent<ASPxClientGanttDependencyDeletingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user inserts a new resource.
+	 */
+	ResourceInserting: ASPxClientEvent<ASPxClientGanttResourceInsertingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user deletes a resource.
+	 */
+	ResourceDeleting: ASPxClientEvent<ASPxClientGanttResourceDeletingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user assigns a resource to a task.
+	 */
+	ResourceAssigning: ASPxClientEvent<ASPxClientGanttResourceAssigningEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a user removes a resource from a task.
+	 */
+	ResourceUnassigning: ASPxClientEvent<ASPxClientGanttResourceUnassigningEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a tooltip is displayed.
+	 */
+	TooltipShowing: ASPxClientEvent<ASPxClientGanttTooltipShowingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs when a user clicks a task.
+	 */
+	TaskClick: ASPxClientEvent<ASPxClientGanttTaskEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs when a user double-clicks a task.
+	 */
+	TaskDblClick: ASPxClientEvent<ASPxClientGanttTaskEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs when a user right-clicks a task or dependency to open the context menu.
+	 */
+	ContextMenu: ASPxClientEvent<ASPxClientGanttContextMenuEventHandler<ASPxClientGantt>>;
 	/**
 	 * Specifies the view type.
 	 * @param viewType The control's view type.
@@ -30474,6 +31528,105 @@ declare class ASPxClientGantt extends ASPxClientControl {
 	 * @param key The task key.
 	 */
 	CollapseTask(key: any): void;
+	/**
+	 * Gets the focused task's key.
+	 */
+	GetFocusedTaskKey(): any;
+	/**
+	 * Sets the focused task.
+	 * @param key The task's key.
+	 */
+	SetFocusedTaskKey(key: any): void;
+	/**
+	 * Gets the task data. The task data.
+	 * @param key The task's key.
+	 */
+	GetTaskData(key: any): any;
+	/**
+	 * Deletes a task.
+	 * @param key The task's key.
+	 */
+	DeleteTask(key: any): void;
+	/**
+	 * Inserts a new task.
+	 * @param data The task data.
+	 */
+	InsertTask(data: any): void;
+	/**
+	 * Updates the task data.
+	 * @param key The task's key.
+	 * @param data The task data.
+	 */
+	UpdateTask(key: any, data: any): void;
+	/**
+	 * Gets the dependency data. The dependency's data.
+	 * @param key The dependency's key.
+	 */
+	GetDependencyData(key: any): any;
+	/**
+	 * Deletes a dependency.
+	 * @param key The dependency's key.
+	 */
+	DeleteDependency(key: any): void;
+	/**
+	 * Inserts a new dependency.
+	 * @param data The dependency data.
+	 */
+	InsertDependency(data: any): void;
+	/**
+	 * Gets the resource data. The resource's data.
+	 * @param key The resource's key.
+	 */
+	GetResourceData(key: any): any;
+	/**
+	 * Deletes a resource.
+	 * @param key The resource's key.
+	 */
+	DeleteResource(key: any): void;
+	/**
+	 * Inserts a new resource.
+	 * @param data The resource data.
+	 * @param taskKeys An array of tasks' keys.
+	 */
+	InsertResource(data: any, taskKeys: any[]): void;
+	/**
+	 * Gets the resource assignment data. The resource assignment data.
+	 * @param key The resource assignment's key.
+	 */
+	GetResourceAssignmentData(key: any): any;
+	/**
+	 * Removes a resource from the task.
+	 * @param resourceKey The resource's key.
+	 * @param taskKey The task's key.
+	 */
+	UnassignResourceFromTask(resourceKey: any, taskKey: any): void;
+	/**
+	 * Assigns a resource to a task.
+	 * @param resourceKey The resource's key.
+	 * @param taskKey The task's key.
+	 */
+	AssignResourceToTask(resourceKey: any, taskKey: any): void;
+	/**
+	 * Gets resources assigned to a task. The resources.
+	 * @param key The task's key.
+	 */
+	GetTaskResources(key: any): any[];
+	/**
+	 * Gets the keys of the visible tasks.
+	 */
+	GetVisibleTaskKeys(): any[];
+	/**
+	 * Gets the keys of the visible dependencies.
+	 */
+	GetVisibleDependencyKeys(): any[];
+	/**
+	 * Gets the keys of the visible resources.
+	 */
+	GetVisibleResourceKeys(): any[];
+	/**
+	 * Gets the keys of the visible resource assignments.
+	 */
+	GetVisibleResourceAssignmentKeys(): any[];
 }
 /**
  * Declare client constants that specify the Gantt's view type.
@@ -32300,7 +33453,7 @@ declare class ASPxClientDashboard extends ASPxClientControl {
 	 */
 	ReloadData(): void;
 	/**
-	 * Refreshes an entire dashboard displayed in the Web Dashboard control.
+	 * Refreshes dashboard items or the entire dashboard.
 	 */
 	Refresh(itemName?: string | string[]): void;
 	/**
@@ -33761,7 +34914,8 @@ declare class BootstrapClientTagBox extends ASPxClientTokenBox {
 	 */
 	GetSelectedItem(): BootstrapClientListBoxItem;
 	/**
-	 * This member is not in effect for this class. It is overridden only for the purpose of preventing it from appearing in Microsoft Visual Studio designer tools.
+	 * Sets the list editor's selected item.
+	 * @param item A BootstrapClientListBoxItem object that specifies the item to select.
 	 */
 	SetSelectedItem(item: BootstrapClientListBoxItem): void;
 	/**
@@ -33780,7 +34934,10 @@ declare class BootstrapClientTagBox extends ASPxClientTokenBox {
 	 */
 	FindItemByValue(value: any): BootstrapClientListBoxItem;
 	/**
-	 * This method is not in effect for the BootstrapClientTagBox class.
+	 * Adds a new item to the editor, specifying the item's display text, associated value and displayed image, and returns the index of the added item. An integer value representing the position to which the new item was added.
+	 * @param texts The item's display text(s).
+	 * @param value An object that represents the item's associated value.
+	 * @param iconCssClass A String value specifying the CSS class of the image displayed by the list item.
 	 */
 	AddItem(texts: string[] | string, value?: any, iconCssClass?: string): number;
 	/**

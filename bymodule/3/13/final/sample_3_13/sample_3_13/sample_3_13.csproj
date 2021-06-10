@@ -97,17 +97,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="jquery.d.ts" />
-    <None Include="knockout.d.ts" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Properties\licenses.licx" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="devexpress-web.d.ts" />
+    <TypeScriptCompile Include="devexpress-web.d.ts" />
+    <TypeScriptCompile Include="jquery.d.ts" />
+    <TypeScriptCompile Include="knockout.d.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

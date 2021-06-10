@@ -1,4 +1,4 @@
-// Type definitions for DevExpress ASP.NET 20.2
+// Type definitions for DevExpress ASP.NET 21.1
 // Project: https://devexpress.com/
 // Definitions by: DevExpress Inc. <https://devexpress.com/>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
@@ -20,7 +20,7 @@ declare class ASPxClientDiagram extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientDiagram>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientDiagram>>;
 	/**
@@ -88,6 +88,9 @@ declare class ASPxClientDiagram extends ASPxClientControl {
 	 * @param readOnly true to make the diagram read-only; otherwise, false.
 	 */
 	SetReadOnly(readOnly: boolean): void;
+	/**
+	 * Returns a value that indicates whether the control's status is read-only.
+	 */
 	GetReadOnly(): boolean;
 	/**
 	 * Returns a shape or connector object specified by its key. The DiagramShape or DiagramConnector object with the specified key.
@@ -99,6 +102,24 @@ declare class ASPxClientDiagram extends ASPxClientControl {
 	 * @param id The item identifier.
 	 */
 	GetItemById(id: string): DiagramItem;
+	/**
+	 * Returns an array of diagram items.
+	 */
+	GetItems(): DiagramItem[];
+	/**
+	 * Returns an array of selected diagram items.
+	 */
+	GetSelectedItems(): DiagramItem[];
+	/**
+	 * Selects the specified items.
+	 * @param items An array of items to select.
+	 */
+	SetSelectedItems(items: DiagramItem[]): void;
+	/**
+	 * Scrolls the view area to the specified item.
+	 * @param item A diagram item (shape or connector).
+	 */
+	ScrollToItem(item: DiagramItem): void;
 }
 /**
  * A method that will handle the ItemClick and ItemDblClick events.
@@ -177,12 +198,12 @@ interface ASPxClientDiagramRequestEditOperationEventHandler<Sender> { (source: S
 declare class ASPxClientDiagramRequestEditOperationEventArgs extends ASPxClientEventArgs {
 	/**
 	 * Initializes a new instance of the ASPxClientDiagramRequestEditOperationEventArgs class with specified settings.
-	 * @param operation The operation.
-	 * @param allowed true to allow the operation to be processed; otherwise, false.
-	 * @param updateUI true if the event is raised by a UI update; false if the event is raised by a user action.
-	 * @param args An object that contains information about the edit operation being processed.
+	 * @param operation Identifies the operation currently being processed.
+	 * @param allowed Specifies whether the edit operation is allowed.
+	 * @param reason Identifies the reason why the event is raised.
+	 * @param args Contains information about the processed shape or connector.
 	 */
-	constructor(operation: DiagramEditOperation, allowed: boolean, updateUI: boolean, args: any);
+	constructor(operation: DiagramEditOperation, allowed: boolean, reason: DiagramRequestEditOperationReason, args: any);
 	/**
 	 * Identifies the operation currently being processed.
 	 */
@@ -194,7 +215,7 @@ declare class ASPxClientDiagramRequestEditOperationEventArgs extends ASPxClientE
 	/**
 	 * Identifies the reason why the event is raised.
 	 */
-	updateUI: boolean;
+	reason: DiagramRequestEditOperationReason;
 	/**
 	 * Contains information about the processed shape or connector.
 	 */
@@ -267,6 +288,11 @@ declare class ASPxClientDiagramDeleteConnectorEventArgs extends ASPxClientEventA
 declare class ASPxClientDiagramChangeConnectionEventArgs extends ASPxClientEventArgs {
 	/**
 	 * Initializes a new instance of the ASPxClientDiagramChangeConnectionEventArgs class with specified settings.
+	 * @param newShape The new connected shape.
+	 * @param oldShape The previous connected shape.
+	 * @param connector The processed connector.
+	 * @param connectionPointIndex The index of the processed point in the shape's connection point collection.
+	 * @param connectorPosition The position of the connector in the processed point.
 	 */
 	constructor(newShape: DiagramShape, oldShape: DiagramShape, connector: DiagramConnector, connectionPointIndex: number, connectorPosition: string);
 	/**
@@ -420,6 +446,9 @@ declare class ASPxClientDiagramResizeShapeEventArgs extends ASPxClientEventArgs 
 declare class ASPxClientDiagramMoveShapeEventArgs extends ASPxClientEventArgs {
 	/**
 	 * Initializes a new instance of the ASPxClientDiagramMoveShapeEventArgs class with specified settings.
+	 * @param shape The processed shape.
+	 * @param newPosition The new shape position (x- and y-coordinates).
+	 * @param oldPosition The previous shape position (x- and y-coordinates).
 	 */
 	constructor(shape: DiagramShape, newPosition: any, oldPosition: any);
 	/**
@@ -465,17 +494,29 @@ declare class DiagramShape extends DiagramItem {
 	 */
 	type: string;
 	/**
-	 * Specifies the shape position (x- and y-coordinates) in units.
+	 * Gets the shape position (x- and y-coordinates) in units.
 	 */
 	position: any;
 	/**
-	 * Specifies the shape size in units.
+	 * Gets the shape size in units.
 	 */
 	size: any;
 	/**
 	 * Gets an array of attached connector identifiers.
 	 */
 	attachedConnectorIds: string[];
+	/**
+	 * Gets the identifier of the container that stores the shape.
+	 */
+	containerId: string;
+	/**
+	 * Gets identifiers of shapes stored in the container.
+	 */
+	containerChildItemIds: string[];
+	/**
+	 * Gets whether the container is expanded.
+	 */
+	containerExpanded: boolean;
 }
 /**
  * Provides information about a connector.
@@ -566,6 +607,19 @@ declare class DiagramEditOperation {
 	 * Identifies the MoveShape operation.
 	 */
 	static readonly MoveShape: string;
+}
+/**
+ * Declares client constants that identify the reason the diagram requests an edit operation's availability.
+ */
+declare class DiagramRequestEditOperationReason {
+	/**
+	 * Indicates that the control is updating the UI. Set the allowed property to `false` to hide the UI element associated with the specified operation.
+	 */
+	static readonly CheckUIElementAvailability: string;
+	/**
+	 * Indicates if a user attempts an edit operation. You can specify whether to allow the operation and display an error message if necessary.
+	 */
+	static readonly ModelModification: string;
 }
 /**
  * Lists built-in shapes' types.
@@ -1961,7 +2015,7 @@ declare class ASPxClientHtmlEditor extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientHtmlEditor>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientHtmlEditor>>;
 	/**
@@ -3126,48 +3180,48 @@ declare class TableStyle extends StyleBase {
 	readonly parent: TableStyle;
 }
 /**
- * Contains a set properties providing the current information about certain document structural elements.
+ * Contains information about the document and its structural elements.
  */
 declare class RichEditDocument {
 	/**
-	 * Returns the sub-document with the specified identifier. A SubDocument value specifying the sub-document.
-	 * @param subDocumentId An integer value specifying the required sub-document.
+	 * Returns the sub-document with the specified identifier. The sub-document.
+	 * @param subDocumentId An integer value that identifies the sub-document.
 	 */
 	getSubDocumentById(subDocumentId: number): SubDocument;
 	/**
-	 * Provides the information about the active sub-document.
+	 * Returns the active sub-document.
 	 */
 	readonly activeSubDocument: SubDocument;
 	/**
-	 * Provides access to the document's main sub-document.
+	 * Returns the main sub-document.
 	 */
 	readonly mainSubDocument: SubDocument;
 	/**
-	 * Provides access to the document's sub-documents.
+	 * Returns the document's sub-documents.
 	 */
 	readonly subDocuments: SubDocument[];
 	/**
-	 * Provides information about sections in the current document.
+	 * Returns information about sections in the document.
 	 */
 	readonly sectionsInfo: Section[];
 	/**
-	 * Provides information about paragraph styles in the current document.
+	 * Returns information about paragraph styles in the document.
 	 */
 	readonly paragraphStylesInfo: ParagraphStyle[];
 	/**
-	 * Provides information about character styles in the current document.
+	 * Returns information about character styles in the document.
 	 */
 	readonly characterStylesInfo: CharacterStyle[];
 	/**
-	 * Provides information about numbered paragraphs in the document.
+	 * Returns information about numbered paragraphs in the document.
 	 */
 	readonly abstractNumberingListsInfo: AbstractNumberingList[];
 	/**
-	 * Provides information about table styles in the current document.
+	 * Returns information about table styles in the document.
 	 */
 	readonly tableStylesInfo: TableStyle[];
 	/**
-	 * Provides information about spell checking in the current document.
+	 * Returns information about spell checking in the document.
 	 */
 	readonly spellingInfo: SpellingInfo;
 }
@@ -3465,12 +3519,12 @@ declare class TableCell {
 	readonly interval: Interval;
 }
 /**
- * Exposes the settings providing the information about the essential document functionality.
+ * Contains information about a sub-document and its structural elements.
  */
 declare class SubDocument {
 	/**
-	 * Return the document's textual representation contained in the specified interval. A string value specifying the text contained in the specified interval.
-	 * @param interval A text buffer interval that contains the target text.
+	 * Returns the text that is contained in the specified interval. The text.
+	 * @param interval A text buffer interval.
 	 */
 	getTextByInterval(interval: Interval): string;
 	/**
@@ -3478,23 +3532,23 @@ declare class SubDocument {
 	 */
 	getFloatingTextBoxInfo(): FloatingTextBoxInfo;
 	/**
-	 * Returns an array of fields that match the search conditions. An array of the Field objects.
-	 * @param arg A position or interval indicating where to search fields.
+	 * Returns an array of fields that match the search conditions. An array of fields.
+	 * @param arg A position or interval where to search for fields.
 	 */
 	findFields(arg: number | Interval): Field[];
 	/**
-	 * Returns an array of tables that match the search conditions. An array of the Table objects.
-	 * @param arg Contains a position or interval indicating where to search tables.
+	 * Returns an array of tables that match the search conditions. An array of tables.
+	 * @param arg A position or interval where to search for tables.
 	 */
 	findTables(arg: number | Interval): Table[];
 	/**
-	 * Returns an array of paragraphs that match the search conditions. An array of the Paragraph objects.
-	 * @param arg Contains a position or interval(s) where to search paragraphs.
+	 * Returns an array of paragraphs that match the search conditions. An array of paragraphs.
+	 * @param arg A position or interval(s) where to search for paragraphs.
 	 */
 	findParagraphs(arg: number | Interval | Interval[]): Paragraph[];
 	/**
-	 * Returns an array of bookmarks that match the search conditions. An array of the Bookmark objects.
-	 * @param arg Contains a position or interval(s) where to search bookmarks, or a bookmark name, or a regular expression.
+	 * Returns an array of bookmarks that match the search conditions. An array of bookmarks.
+	 * @param arg A bookmark name, or a regular expression, or a position or interval(s) where to search for bookmarks.
 	 */
 	findBookmarks(arg: number | Interval | Interval[] | string | RegExp): Bookmark[];
 	/**
@@ -3502,43 +3556,43 @@ declare class SubDocument {
 	 */
 	readonly id: number;
 	/**
-	 * Gets a value specifying the sub-document type.
+	 * Gets the sub-document type.
 	 */
 	readonly type: SubDocumentType;
 	/**
-	 * Provides information about paragraphs contained in the document.
+	 * Returns information about paragraphs in the sub-document.
 	 */
 	readonly paragraphsInfo: Paragraph[];
 	/**
-	 * Provides information about fields in the current document.
+	 * Returns information about fields in the sub-document.
 	 */
 	readonly fieldsInfo: Field[];
 	/**
-	 * Provides information about tables contained in the document.
+	 * Returns information about tables in the sub-document.
 	 */
 	readonly tablesInfo: Table[];
 	/**
-	 * Provides information about document bookmarks.
+	 * Returns information about bookmarks in the sub-document.
 	 */
 	readonly bookmarksInfo: Bookmark[];
 	/**
-	 * Provides access to an array of objects containing in-line picture settings.
+	 * Returns information about in-line pictures in the sub-document.
 	 */
 	readonly inlinePicturesInfo: InlinePictureInfo[];
 	/**
-	 * Gets the document's textual representation.
+	 * Gets the document's text.
 	 */
 	readonly text: string;
 	/**
-	 * Gets the character length of the document.
+	 * Gets the length of the sub-document.
 	 */
 	readonly length: number;
 	/**
-	 * Provides information about floating text boxes contained within the sub-document if it is the main sub-document or header/footer.
+	 * Returns information about floating text boxes in the sub-document.
 	 */
 	readonly floatingTextBoxesInfo: FloatingTextBoxInfo[];
 	/**
-	 * Provides information about floating pictures in the sub-document.
+	 * Returns information about floating pictures in the sub-document.
 	 */
 	readonly floatingPicturesInfo: FloatingPictureInfo[];
 }
@@ -3600,7 +3654,7 @@ declare class RichEditSelection {
 	 */
 	setSelection(arg: number | Interval | Interval[]): void;
 	/**
-	 * Gets the maximum position of a document interval in the selection.
+	 * Gets the length of the active sub-document.
 	 */
 	getIntervalMaxPosition(): number;
 	/**
@@ -3609,12 +3663,12 @@ declare class RichEditSelection {
 	 */
 	goToNextLine(extendSelection?: boolean): void;
 	/**
-	 * Moves the cursor to the end of the line in which the cursor is located and allows you to extend the selection.
+	 * Moves the cursor to the end of the line and allows you to extend the selection.
 	 * @param extendSelection true to extend the selection; otherwise, false.
 	 */
 	goToLineEnd(extendSelection?: boolean): void;
 	/**
-	 * Moves the cursor to the start of the line in which the cursor is located and allows you to extend the selection.
+	 * Moves the cursor to the start of the line and allows you to extend the selection.
 	 * @param extendSelection true to extend the selection; otherwise, false.
 	 */
 	goToLineStart(extendSelection?: boolean): void;
@@ -3634,27 +3688,27 @@ declare class RichEditSelection {
 	 */
 	goToPreviousCharacter(extendSelection?: boolean): void;
 	/**
-	 * Selects the line in which the cursor is located and allows you to extend the entire selection with the currently existing selection.
+	 * Selects the line in which the cursor is located and allows you to extend the selection.
 	 * @param extendSelection true to extend the selection; otherwise, false.
 	 */
 	selectLine(extendSelection?: boolean): void;
 	/**
-	 * Moves the cursor to the beginning of the next page and allows you to extend the selection.
+	 * Moves the cursor to the next page and allows you to extend the selection.
 	 * @param extendSelection true to extend the selection; otherwise, false.
 	 */
 	goToNextPage(extendSelection?: boolean): void;
 	/**
-	 * Moves the cursor to the beginning of the previous page and allows you to extend the selection.
+	 * Moves the cursor to the previous page and allows you to extend the selection.
 	 * @param extendSelection true to extend the selection; otherwise, false.
 	 */
 	goToPreviousPage(extendSelection?: boolean): void;
 	/**
-	 * Moves the cursor to the start of the document and allows you to extend the selection.
+	 * Moves the cursor to the start of the active sub-document and allows you to extend the selection.
 	 * @param extendSelection true to extend the selection; otherwise, false.
 	 */
 	goToDocumentStart(extendSelection?: boolean): void;
 	/**
-	 * Moves the cursor to the end of the document and allows you to extend the selection.
+	 * Moves the cursor to the end of the active sub-document and allows you to extend the selection.
 	 * @param extendSelection true to extend the selection; otherwise, false.
 	 */
 	goToDocumentEnd(extendSelection?: boolean): void;
@@ -3669,12 +3723,12 @@ declare class RichEditSelection {
 	 */
 	goToPrevWord(extendSelection?: boolean): void;
 	/**
-	 * Moves the cursor to the start of the paragraph in which the cursor is located and allows you to extend the selection.
+	 * Moves the cursor to the start of the paragraph and allows you to extend the selection.
 	 * @param extendSelection true to extend the selection; otherwise, false.
 	 */
 	goToParagraphStart(extendSelection?: boolean): void;
 	/**
-	 * Moves the cursor to the end of the paragraph in which the cursor is located and allows you to extend the selection.
+	 * Moves the cursor to the end of the paragraph and allows you to extend the selection.
 	 * @param extendSelection true to extend the selection; otherwise, false.
 	 */
 	goToParagraphEnd(extendSelection?: boolean): void;
@@ -3693,22 +3747,19 @@ declare class RichEditSelection {
 	 */
 	goToStartPrevPageCommand(extendSelection?: boolean): void;
 	/**
-	 * Selects the table cell in which the cursor is located and allows you to extend the entire selection with the currently existing selection.
-	 * @param extendSelection true to extend the selection; otherwise, false.
+	 * Selects the table cell in which the cursor is located.
 	 */
-	selectTableCell(extendSelection?: boolean): void;
+	selectTableCell(): void;
 	/**
-	 * Selects the table row in which the cursor is located and allows you to extend the entire selection with the currently existing selection.
-	 * @param extendSelection true to extend the selection; otherwise, false.
+	 * Selects the table row in which the cursor is located.
 	 */
-	selectTableRow(extendSelection?: boolean): void;
+	selectTableRow(): void;
 	/**
-	 * Selects the entire table in which the cursor is located and allows you to extend the entire selection with the currently existing selection.
-	 * @param extendSelection true to extend the selection; otherwise, false.
+	 * Selects the entire table in which the cursor is located.
 	 */
-	selectTable(extendSelection?: boolean): void;
+	selectTable(): void;
 	/**
-	 * Selects the editor's entire content.
+	 * Selects the entire content of the active sub-document.
 	 */
 	selectAll(): void;
 	/**
@@ -3736,11 +3787,11 @@ declare class RichEditSelection {
 	 */
 	setActiveSubDocumentById(id: number): boolean;
 	/**
-	 * Gets or sets an array of document intervals in the selection.
+	 * Specifies an array of selected intervals in the document.
 	 */
 	intervals: Interval[];
 	/**
-	 * Gets whether a floating picture or text box is selected.
+	 * Gets whether only a floating picture or text box is selected.
 	 */
 	readonly isFloatingObjectSelected: boolean;
 	/**
@@ -3752,7 +3803,7 @@ declare class RichEditSelection {
 	 */
 	readonly isPictureSelected: boolean;
 	/**
-	 * Gets or sets a value specifying whether the current selection is collapsed (and represents the cursor position).
+	 * Specifies whether the current selection is collapsed (the cursor position).
 	 */
 	collapsed: boolean;
 }
@@ -10233,9 +10284,15 @@ declare class ASPxClientRichEditContentRemovedEventArgs extends ASPxClientEventA
 	 * Gets the text buffer interval related to the removed content.
 	 */
 	interval: Interval;
+	/**
+	 * Returns the recently removed text.
+	 */
 	removedText: string;
 	/**
 	 * Initializes a new instance of the ASPxClientRichEditContentRemovedEventArgs class with specified settings.
+	 * @param subDocumentId Gets the active sub-document's identifier.
+	 * @param interval Gets the text buffer interval related to the removed content.
+	 * @param removedText Returns the recently removed text.
 	 */
 	constructor(subDocumentId: number, interval: Interval, removedText: string);
 }
@@ -10832,7 +10889,7 @@ declare class ASPxClientRichEdit extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientRichEdit>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientRichEdit>>;
 	/**
@@ -10848,7 +10905,7 @@ declare class ASPxClientRichEdit extends ASPxClientControl {
 	 */
 	DocumentFormatted: ASPxClientEvent<ASPxClientRichEditDocumentFormattedEventHandler>;
 	/**
-	 * Fires if an end user makes any change in the RichEdit's document on the client.
+	 * Fires if any change is made to the RichEdit's document on the client.
 	 */
 	DocumentChanged: ASPxClientEvent<ASPxClientEventHandler<ASPxClientRichEdit>>;
 	/**
@@ -11418,7 +11475,7 @@ declare class ASPxClientSchedulerStorageControl extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientSchedulerStorageControl>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientSchedulerStorageControl>>;
 	/**
@@ -11552,8 +11609,8 @@ declare class ASPxClientAppointment {
 	 */
 	AddResource(resourceId: string): void;
 	/**
-	 * Gets the resource associated with the client-side appointment by its index. An identifier of the specified resource (IPersistentObject.Id)
-	 * @param index An integer, representing an index of a resource in a resource collection associated with the current appointment.
+	 * Gets the resource associated with the client-side appointment by its index. The resource.
+	 * @param index The resource's index.
 	 */
 	GetResource(index: number): string;
 	/**
@@ -11580,7 +11637,7 @@ declare class ASPxClientAppointment {
 	 */
 	SetDuration(duration: any): void;
 	/**
-	 * Returns the duration of the appointment.
+	 * Gets the duration of the appointment.
 	 */
 	GetDuration(): number;
 	/**
@@ -11598,7 +11655,7 @@ declare class ASPxClientAppointment {
 	 */
 	SetAppointmentType(type: ASPxAppointmentType): void;
 	/**
-	 * Returns the appointment type.
+	 * Gets the appointment type.
 	 */
 	GetAppointmentType(): ASPxAppointmentType;
 	/**
@@ -11607,7 +11664,7 @@ declare class ASPxClientAppointment {
 	 */
 	SetStatusId(statusId: number): void;
 	/**
-	 * Gets or sets the integer identifier of the status object associated with the appointment.
+	 * Gets the integer identifier of the status object associated with the appointment.
 	 */
 	GetStatusId(): number;
 	/**
@@ -11616,7 +11673,7 @@ declare class ASPxClientAppointment {
 	 */
 	SetLabelId(statusId: number): void;
 	/**
-	 * Gets or sets the integer identifier of the label object associated with the appointment.
+	 * Gets the integer identifier of the label object associated with the appointment.
 	 */
 	GetLabelId(): number;
 	/**
@@ -11625,7 +11682,7 @@ declare class ASPxClientAppointment {
 	 */
 	SetSubject(subject: string): void;
 	/**
-	 * Gets or sets the appointment's subject text.
+	 * Gets the appointment's subject text.
 	 */
 	GetSubject(): string;
 	/**
@@ -11643,16 +11700,16 @@ declare class ASPxClientAppointment {
 	 */
 	SetLocation(location: string): void;
 	/**
-	 * Gets or sets the text that specifies a place where the appointment is scheduled.
+	 * Gets a location where the appointment is scheduled.
 	 */
 	GetLocation(): string;
 	/**
-	 * Specifies the property value of the client appointment corresponding to the Appointment.AllDay appointment property.
+	 * Set the property value of the client appointment corresponding to the Appointment.AllDay appointment property.
 	 * @param allDay true to indicate the all-day appointment; otherwise, false.
 	 */
 	SetAllDay(allDay: boolean): void;
 	/**
-	 * Returns a value specifying whether the current appointment lasts the entire day.
+	 * Gets a value that specifies whether the current appointment lasts the entire day.
 	 */
 	GetAllDay(): boolean;
 	/**
@@ -11665,7 +11722,7 @@ declare class ASPxClientAppointment {
 	 */
 	SetRecurrenceInfo(recurrenceInfo: ASPxClientRecurrenceInfo): void;
 	/**
-	 * Gets the property value of the client appointment corresponding to the Appointment.RecurrenceInfo appointment property.
+	 * Gets the appointment's recurrence information.
 	 */
 	GetRecurrenceInfo(): ASPxClientRecurrenceInfo;
 }
@@ -12090,7 +12147,7 @@ declare class ASPxClientScheduler extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientScheduler>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientScheduler>>;
 	/**
@@ -13324,7 +13381,7 @@ declare class ASPxClientSpreadsheet extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientSpreadsheet>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientSpreadsheet>>;
 	/**
@@ -14871,7 +14928,7 @@ declare class ASPxClientCallback extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientCallback>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientCallback>>;
 	/**
@@ -14934,7 +14991,7 @@ declare class ASPxClientCallbackPanel extends ASPxClientPanel {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientCallbackPanel>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientCallbackPanel>>;
 	/**
@@ -15044,7 +15101,7 @@ declare class ASPxClientProcessingModeEventArgs extends ASPxClientEventArgs {
 	 */
 	constructor(processOnServer: boolean);
 	/**
-	 * Gets or sets a value that specifies whether the event should be finally processed on the server side.
+	 * Specifies whether or not to process the event on the server.
 	 */
 	processOnServer: boolean;
 }
@@ -15499,7 +15556,7 @@ declare class ASPxClientDataView extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientDataView>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientDataView>>;
 	/**
@@ -15933,7 +15990,7 @@ declare class ASPxClientFileManager extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientFileManager>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientFileManager>>;
 	/**
@@ -17386,7 +17443,7 @@ declare class ASPxClientHiddenField extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientHiddenField>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientHiddenField>>;
 	/**
@@ -18016,13 +18073,13 @@ declare class ASPxClientMenuBase extends ASPxClientControl {
 	 */
 	GetItemCount(): number;
 	/**
-	 * Returns the menu's root menu item specified by its index. An ASPxClientMenuItem object representing the root item located at the specified index within the menu's ASPxMenuBase.Items collection.
-	 * @param index An integer value specifying the zero-based index of the root menu item to be retrieved.
+	 * Returns the root menu item with the specified index. The root item with the specified index within the menu's ASPxMenuBase.Items collection.
+	 * @param index The zero-based index of the root menu item.
 	 */
 	GetItem(index: number): ASPxClientMenuItem;
 	/**
-	 * Returns a menu item specified by its name. An ASPxClientMenuItem object that represents the menu item with the specified name.
-	 * @param name A string value specifying the name of the menu item.
+	 * Returns a menu item with the specified name. The menu item with the specified name.
+	 * @param name The name of the menu item.
 	 */
 	GetItemByName(name: string): ASPxClientMenuItem;
 	/**
@@ -18309,7 +18366,7 @@ declare class ASPxClientNavBar extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientNavBar>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientNavBar>>;
 	/**
@@ -19037,7 +19094,7 @@ declare class ASPxClientPopupControlBase extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientPopupControlBase>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientPopupControlBase>>;
 	/**
@@ -20081,7 +20138,7 @@ declare class ASPxClientRoundPanel extends ASPxClientPanelBase {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientRoundPanel>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientRoundPanel>>;
 	/**
@@ -20390,7 +20447,7 @@ declare class ASPxClientTabControlBase extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientTabControlBase>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientTabControlBase>>;
 	/**
@@ -20659,7 +20716,7 @@ declare class ASPxClientTitleIndex extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientTitleIndex>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientTitleIndex>>;
 	/**
@@ -20728,7 +20785,7 @@ declare class ASPxClientTreeView extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientTreeView>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientTreeView>>;
 	/**
@@ -20736,18 +20793,18 @@ declare class ASPxClientTreeView extends ASPxClientControl {
 	 */
 	CallbackError: ASPxClientEvent<ASPxClientCallbackErrorEventHandler<ASPxClientTreeView>>;
 	/**
-	 * Returns a node specified by its index within the ASPxTreeView's node collection. An ASPxClientTreeViewNode object, representing the node located at the specified index within the ASPxTreeView's node collection.
-	 * @param index An integer value specifying the zero-based index of the node to be retrieved.
+	 * Returns a node with the specified index within the ASPxTreeView's node collection. The node with the specified index within the ASPxTreeView's node collection.
+	 * @param index The zero-based index of the node.
 	 */
 	GetNode(index: number): ASPxClientTreeViewNode;
 	/**
-	 * Returns a node specified by its name. An ASPxClientTreeViewNode object that represents the node with the specified name.
-	 * @param name A string value specifying the name of the node.
+	 * Returns a node with the specified name. The node with the specified name.
+	 * @param name The name of the node.
 	 */
 	GetNodeByName(name: string): ASPxClientTreeViewNode;
 	/**
-	 * Returns a node specified by its text. An ASPxClientTreeViewNode object that represents the node with the specified node's text content.
-	 * @param text A string value specifying the text content of the node.
+	 * Returns a node with the specified text. The node with the specified node's text content.
+	 * @param text The text content of the node.
 	 */
 	GetNodeByText(text: string): ASPxClientTreeViewNode;
 	/**
@@ -21928,11 +21985,11 @@ declare class ASPxClientButtonClickEventArgs extends ASPxClientProcessingModeEve
  */
 declare class ASPxClientCalendar extends ASPxClientEdit {
 	/**
-	 * Fires on the client side after the selected date has been changed within the calendar.
+	 * Occurs on the client after a user changes the selected date in the calendar.
 	 */
 	SelectionChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientCalendar>>;
 	/**
-	 * Occurs on the client side when the month displayed within the calendar is changed.
+	 * Occurs on the client when a user changes the month in the calendar.
 	 */
 	VisibleMonthChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientCalendar>>;
 	/**
@@ -22171,7 +22228,7 @@ declare class ASPxClientRadioButton extends ASPxClientCheckBox {
  */
 declare class ASPxClientColorEdit extends ASPxClientDropDownEditBase {
 	/**
-	 * Fires after the selected color has been changed within the color editor via end-user interaction.
+	 * Occurs on the client after a user changes the selected color in the color editor.
 	 */
 	ColorChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientColorEdit>>;
 	/**
@@ -22206,7 +22263,7 @@ declare class ASPxClientComboBox extends ASPxClientDropDownEditBase {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientComboBox>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientComboBox>>;
 	/**
@@ -22214,7 +22271,7 @@ declare class ASPxClientComboBox extends ASPxClientDropDownEditBase {
 	 */
 	CallbackError: ASPxClientEvent<ASPxClientCallbackErrorEventHandler<ASPxClientComboBox>>;
 	/**
-	 * Occurs on the client side after a different item in the list has been selected (focus has been moved from one item to another).
+	 * Fires when the user changes the selection.
 	 */
 	SelectedIndexChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientComboBox>>;
 	/**
@@ -22396,7 +22453,7 @@ declare class ASPxClientComboBox extends ASPxClientDropDownEditBase {
  */
 declare class ASPxClientDateEdit extends ASPxClientDropDownEditBase {
 	/**
-	 * Fires after the selected date has been changed within the date editor.
+	 * Occurs on the client after a user changes the selected date in the date editor.
 	 */
 	DateChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientDateEdit>>;
 	/**
@@ -22777,7 +22834,7 @@ declare class ASPxClientFilterControl extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientFilterControl>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientFilterControl>>;
 	/**
@@ -22793,10 +22850,11 @@ declare class ASPxClientFilterControl extends ASPxClientControl {
 	 */
 	GetAppliedFilterExpression(): string;
 	/**
-	 * Returns the editor used to edit operand values for the specified filter column. An ASPxClientEditBase descendant that represents the editor used to edit operand values for the specified filter column.
-	 * @param editorIndex An integer value that identifies the filter column by its index within the collection.
+	 * Returns the editor used to edit the specified values. The editor.
+	 * @param index The index of the filter condition.
+	 * @param valueIndex The index of the value in the specified filter condition.
 	 */
-	GetEditor(editorIndex: number): ASPxClientEditBase;
+	GetEditor(index: number, valueIndex: number): ASPxClientEditBase;
 	/**
 	 * Returns a value indicating whether the filter expression being currently composed on the client side is valid - all expression conditions are filled.
 	 */
@@ -22905,7 +22963,7 @@ declare class ASPxClientListBox extends ASPxClientListEdit {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientListBox>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientListBox>>;
 	/**
@@ -23361,7 +23419,7 @@ declare class ASPxClientSpinEditBase extends ASPxClientButtonEditBase {
  */
 declare class ASPxClientSpinEdit extends ASPxClientSpinEditBase {
 	/**
-	 * Occurs on the client side when the editor's value is altered in any way.
+	 * Occurs on the client when a user changes the editor's value.
 	 */
 	NumberChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientSpinEdit>>;
 	/**
@@ -23411,7 +23469,7 @@ declare class ASPxClientSpinEdit extends ASPxClientSpinEditBase {
  */
 declare class ASPxClientTimeEdit extends ASPxClientSpinEditBase {
 	/**
-	 * Fires after the selected date has been changed within the time editor.
+	 * Occurs on the client after a user changes the selected date in the time editor.
 	 */
 	DateChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientTimeEdit>>;
 	/**
@@ -23557,7 +23615,7 @@ declare class ASPxClientTextEdit extends ASPxClientEdit {
 	 */
 	KeyUp: ASPxClientEvent<ASPxClientEditKeyEventHandler<ASPxClientTextEdit>>;
 	/**
-	 * Fires on the client side when the editor's text is changed and focus moves out of the editor by end-user interactions.
+	 * Occurs on the client when a user changes the editor's text and the editor loses focus.
 	 */
 	TextChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientTextEdit>>;
 	/**
@@ -23752,7 +23810,7 @@ declare class ASPxClientTokenBox extends ASPxClientComboBox {
 	 */
 	IsCustomToken(text: string, caseSensitive: boolean): boolean;
 	/**
-	 * Fires on the client side after the token collection has been changed.
+	 * Occurs on the client after a user changes the token collection.
 	 */
 	TokensChanged: ASPxClientEvent<ASPxClientEventHandler<ASPxClientTokenBox>>;
 	/**
@@ -23778,7 +23836,7 @@ declare class ASPxClientTokenBox extends ASPxClientComboBox {
  */
 declare class ASPxClientTrackBar extends ASPxClientEdit {
 	/**
-	 * Fires on the client side before a track bar position is changed and allows you to cancel the action.
+	 * Occurs on the client before a user changes track bar position.
 	 */
 	PositionChanging: ASPxClientEvent<ASPxClientTrackBarPositionChangingEventHandler<ASPxClientTrackBar>>;
 	/**
@@ -23808,7 +23866,7 @@ declare class ASPxClientTrackBar extends ASPxClientEdit {
 	 */
 	GetItemValue(index: number): any;
 	/**
-	 * Returns a track bar item text. A String value specifying the track bar item text.
+	 * Returns a track bar item's text. A String value specifying the track bar item text.
 	 * @param index An integer value that specifies the required item's index.
 	 */
 	GetItemText(index: number): string;
@@ -23818,7 +23876,7 @@ declare class ASPxClientTrackBar extends ASPxClientEdit {
 	 */
 	GetItemToolTip(index: number): string;
 	/**
-	 * Returns the number of the track bar items that are maintained by the item collection.
+	 * Returns the number of track bar items that are maintained by the item collection.
 	 */
 	GetItemCount(): number;
 	/**
@@ -24334,7 +24392,7 @@ declare class ASPxClientGridLookup extends ASPxClientDropDownEditBase {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientGridLookup>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientGridLookup>>;
 	/**
@@ -25581,7 +25639,7 @@ declare class ASPxClientGridView extends ASPxClientGridBase {
 	 */
 	BatchEditChangesPreviewShown: ASPxClientEvent<ASPxClientEventHandler<ASPxClientGridView>>;
 	/**
-	 * Occurs on the client side when the focused cell is about to be changed.
+	 * Fires before the focused cell is changed.
 	 */
 	FocusedCellChanging: ASPxClientEvent<ASPxClientGridViewFocusedCellChangingEventHandler<ASPxClientGridView>>;
 	/**
@@ -26729,9 +26787,9 @@ declare class ASPxClientGridViewCellInfo {
  */
 declare class ASPxClientGridViewBatchEditApi {
 	/**
-	 * Validate grid data contained in all rows when the grid operates in Batch Edit mode. true, if data in all rows passes validation; otherwise, false.
-	 * @param validateOnlyModified true, if only modified rows should be validated; otherwise, false.
-	 * @param validateOnCurrentPageOnly true, to validate rows that are located only on the current page; otherwise, false.
+	 * Validate data in rows when the grid in batch edit mode. true, if data in rows passes validation; otherwise, false.
+	 * @param validateOnlyModified true, to validate only modified rows; otherwise (false), to validate all rows.
+	 * @param validateOnCurrentPageOnly true, to validate rows only on the current page; otherwise (false), to validate modified rows across all pages.
 	 */
 	ValidateRows(validateOnlyModified?: boolean, validateOnCurrentPageOnly?: boolean): boolean;
 	/**
@@ -27897,895 +27955,6 @@ declare class ASPxClientVerticalGridBatchEditApi {
  * Lists values that specify the document formats available for export from the grid.
  */
 declare class ASPxClientVerticalGridExportFormat extends ASPxClientGridExportFormat {
-}
-
-/**
- * The client-side equivalent of the BinaryImageEditExtension.
- */
-declare class MVCxClientBinaryImage extends ASPxClientBinaryImage {
-	/**
-	 * Occurs when you initiate a callback to the server.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientBinaryImage>>;
-	/**
-	 * Sends a callback with parameters to update the Binary Image.
-	 * @param data Information that is passed to the server.
-	 * @param onSuccess A client action that is performed if a callback is completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientBinaryImage type. The converted object.
-	 * @param obj The object.
-	 */
-	static Cast(obj: any): MVCxClientBinaryImage;
-}
-/**
- * A client-side counterpart of the Calendar and CalendarFor extensions.
- */
-declare class MVCxClientCalendar extends ASPxClientCalendar {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientCalendar>>;
-	/**
-	 * Converts the specified object to the MVCxClientCalendar type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientCalendar;
-}
-/**
- * A client-side counterpart of the CallbackPanel extension.
- */
-declare class MVCxClientCallbackPanel extends ASPxClientCallbackPanel {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientCallbackPanel>>;
-	/**
-	 * Sends a callback with a parameter to update the Callback Panel by processing the passed information on the server, in an Action specified by the Callback Panel's CallbackPanelSettings.CallbackRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified by the CallbackPanelSettings.CallbackRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientCallbackPanel type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientCallbackPanel;
-}
-/**
- * A client-side counterpart of the CardView extension.
- */
-declare class MVCxClientCardView extends ASPxClientCardView {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientCardView>>;
-	/**
-	 * Sends a callback with a parameter to update the CardView by processing the passed information on the server, in an Action specified via the CardView's GridSettingsBase.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the CardView's GridSettingsBase.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Sends a callback with a parameter to process the passed information on the server, in an Action specified via the CardView's GridSettingsBase.CustomDataActionRouteValues property, and then process the returned result in the specified client function. This method does not update the CardView.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the GridSettingsBase.CustomDataActionRouteValues property.
-	 * @param onCallback A ASPxClientCardViewValuesCallback object that represents the JavaScript function which receives the information on the client side.
-	 */
-	GetValuesOnCustomCallback(data: any, onCallback: ASPxClientCardViewValuesCallback): void;
-	/**
-	 * Converts the specified object to the MVCxClientCardView type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientCardView;
-}
-/**
- * A client-side counterpart of the Chart extension.
- */
-declare class MVCxClientChart extends ASPxClientWebChartControl {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientChart>>;
-	/**
-	 * Sends a callback with a parameter to update a Chart by processing the passed information on the server, in an Action specified via the Chart's ChartControlSettings.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the ChartControlSettings.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientChart type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientChart;
-}
-/**
- * A client-side counterpart of the ComboBox and ComboBoxFor extensions.
- */
-declare class MVCxClientComboBox extends ASPxClientComboBox {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientComboBox>>;
-	/**
-	 * Sends a callback with a parameter to update the ComboBox by processing the passed information on the server, in an Action specified by the ComboBox's AutoCompleteBoxBaseSettings.CallbackRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified by the AutoCompleteBoxBaseSettings.CallbackRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientComboBox type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientComboBox;
-}
-/**
- * A client-side counterpart of the DataView extension.
- */
-declare class MVCxClientDataView extends ASPxClientDataView {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientDataView>>;
-	/**
-	 * Sends a callback with a parameter to update the DataView by processing the passed information on the server, in an Action specified via the DataView's DataViewSettings.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the DataViewSettings.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientDataView type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientDataView;
-}
-/**
- * A client-side counterpart of the DateEdit extension.
- */
-declare class MVCxClientDateEdit extends ASPxClientDateEdit {
-	/**
-	 * Converts the specified object to the MVCxClientDateEdit type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientDateEdit;
-}
-/**
- * A client-side counterpart of the Diagram extension.
- */
-declare class MVCxClientDiagram extends ASPxClientDiagram {
-	/**
-	 * Converts the specified object to the MVCxClientDiagram type. The converted client object.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientDiagram;
-}
-/**
- * A client-side counterpart of the DockManager extension.
- */
-declare class MVCxClientDockManager extends ASPxClientDockManager {
-	/**
-	 * Sends a callback with a parameter to update the DockManager by processing the passed information on the server, in an Action specified by the DockManager's DockManagerSettings.CallbackRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified by the DockManagerSettings.CallbackRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientDockManager type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientDockManager;
-}
-/**
- * A client-side counterpart of the DockPanel extension.
- */
-declare class MVCxClientDockPanel extends ASPxClientDockPanel {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientDockPanel>>;
-	/**
-	 * Sends a callback with a parameter to update the DockPanel by processing the passed information on the server, in an Action specified by the DockPanel's PopupControlSettingsBase.CallbackRouteValues (via the DockPanelSettings.CallbackRouteValues) property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified by the PopupControlSettingsBase.CallbackRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientDockPanel type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientDockPanel;
-}
-/**
- * A client-side counterpart of the FileManager extension.
- */
-declare class MVCxClientFileManager extends ASPxClientFileManager {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientFileManager>>;
-	/**
-	 * Sends a callback to the server and generates the server-side ASPxFileManager.CustomCallback event, passing it the specified argument.
-	 * @param data A string value that specifies any information that needs to be sent to the server-side ASPxFileManager.CustomCallback event.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientFileManager type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientFileManager;
-}
-/**
- * A client-side counterpart of the FilterControl extension.
- */
-declare class MVCxClientFilterControl extends ASPxClientFilterControl {
-	/**
-	 * Returns the filter control's state.
-	 * @param obj An object that receives a filter control's callback parameters.
-	 */
-	FillStateObject(obj: any): void;
-	/**
-	 * Converts the specified object to the MVCxClientFilterControl type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientFilterControl;
-}
-/**
- * A client-side counterpart of the Gantt extension.
- */
-declare class MVCxClientGantt extends ASPxClientGantt {
-	/**
-	 * Converts the specified object to the MVCxClientGantt type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientGantt;
-}
-/**
- * A client-side counterpart of the GridView extension.
- */
-declare class MVCxClientGridView extends ASPxClientGridView {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientGridView>>;
-	/**
-	 * Sends a callback with a parameter to update the GridView by processing the passed information on the server, in an Action specified via the grid's GridSettingsBase.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the grid's GridSettingsBase.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Sends a callback with a parameter to process the passed information on the server, in an Action specified via the GridView's GridSettingsBase.CustomDataActionRouteValues property, and then process the returned result in the specified client function. This method does not update the GridView.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the GridSettingsBase.CustomDataActionRouteValues property.
-	 * @param onCallback A ASPxClientGridViewValuesCallback object that represents the JavaScript function which receives the information on the client side.
-	 */
-	GetValuesOnCustomCallback(data: any, onCallback: ASPxClientGridViewValuesCallback): void;
-	/**
-	 * Converts the specified object to the MVCxClientGridView type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientGridView;
-}
-/**
- * A client-side counterpart of the HtmlEditor extension.
- */
-declare class MVCxClientHtmlEditor extends ASPxClientHtmlEditor {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientHtmlEditor>>;
-	/**
-	 * Sends a callback with a parameter to process the passed information on the server, in an Action specified via the HtmlEditor's HtmlEditorSettings.CustomDataActionRouteValues property, and then return the processing result to the ASPxClientHtmlEditor.CustomDataCallback event on the client. This method does not update the HtmlEditor.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the HtmlEditorSettings.CustomDataActionRouteValues property.
-	 * @param onCallback An ASPxClientDataCallback object that is the JavaScript function which receives the callback data as a parameter.
-	 */
-	PerformDataCallback(data: any, onCallback?: ASPxClientDataCallback): void;
-	/**
-	 * Converts the specified object to the MVCxClientHtmlEditor type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientHtmlEditor;
-}
-/**
- * A client-side counterpart of the ImageGallery extension.
- */
-declare class MVCxClientImageGallery extends ASPxClientImageGallery {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientImageGallery>>;
-	/**
-	 * Sends a callback with a parameter to update the ImageGallery by processing the passed information on the server, in an Action specified via the ImageGallery's ImageGallerySettings.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the ImageGallerySettings.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientImageGallery type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientImageGallery;
-}
-/**
- * A client-side counterpart of the ListBox and ListBoxFor extensions.
- */
-declare class MVCxClientListBox extends ASPxClientListBox {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientListBox>>;
-	/**
-	 * Sends a callback with a parameter to update the ListBox by processing the passed information on the server, in an Action specified by the ListBox's ListBoxSettings.CallbackRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified by the ListBoxSettings.CallbackRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientListBox type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientListBox;
-}
-/**
- * A client-side counterpart of the NavBar extension.
- */
-declare class MVCxClientNavBar extends ASPxClientNavBar {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientNavBar>>;
-	/**
-	 * Converts the specified object to the MVCxClientNavBar type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientNavBar;
-}
-/**
- * A client-side counterpart of the PivotGrid extension.
- */
-declare class MVCxClientPivotGrid extends ASPxClientPivotGrid {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientPivotGrid>>;
-	/**
-	 * Sends a callback with a parameter to update the PivotGrid by processing the passed information on the server, in an Action specified via the grid's PivotGridSettings.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the grid's PivotGridSettings.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Passes PivotGrid callback parameters to the specified object.
-	 * @param obj An object that receives PivotGrid callback parameters.
-	 */
-	FillStateObject(obj: any): void;
-	/**
-	 * Converts the specified object to the MVCxClientPivotGrid type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientPivotGrid;
-}
-/**
- * A client-side counterpart of the PopupControl extension.
- */
-declare class MVCxClientPopupControl extends ASPxClientPopupControl {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientPopupControl>>;
-	/**
-	 * Sends a callback with a parameter to update the PopupControl by processing the passed information on the server, in an Action specified via the PopupControl's PopupControlSettingsBase.CallbackRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the PopupControlSettingsBase.CallbackRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Sends a callback with a parameters to update the popup window by processing the related popup window and the passed information on the server, in an Action specified by the PopupControl's PopupControlSettingsBase.CallbackRouteValues property.
-	 * @param window A ASPxClientPopupWindow object identifying the processed popup window.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified by the PopupControlSettingsBase.CallbackRouteValues property.
-	 */
-	PerformWindowCallback(window: ASPxClientPopupWindow, data: any): void;
-	/**
-	 * Converts the specified object to the MVCxClientPopupControl type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientPopupControl;
-}
-/**
- * A client-side counterpart of the Query Builder extension.
- */
-declare class MVCxClientQueryBuilder extends ASPxClientQueryBuilder {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientQueryBuilder>>;
-	/**
-	 * Occurs after executing the Save command on the client.
-	 */
-	SaveCommandExecuted: ASPxClientEvent<MVCxClientQueryBuilderSaveCommandExecutedEventHandler<MVCxClientQueryBuilder>>;
-	/**
-	 * Sends a callback to the server and generates the server-side event passing it the specified argument.
-	 * @param arg A string value that represents any information that needs to be sent to the server-side event.
-	 */
-	PerformCallback(arg: any): void;
-}
-/**
- * A method that will handle the MVCxClientQueryBuilder.SaveCommandExecuted event.
- * @param source An object which is the event source. Identifies the client object that raised the event.
- * @param e A MVCxClientQueryBuilderSaveCommandExecutedEventArgs object that contains event data.
- */
-interface MVCxClientQueryBuilderSaveCommandExecutedEventHandler<Sender> { (source: Sender, e: MVCxClientQueryBuilderSaveCommandExecutedEventArgs): void; }
-/**
- * Provides data for the MVCxClientQueryBuilder.SaveCommandExecuted event.
- */
-declare class MVCxClientQueryBuilderSaveCommandExecutedEventArgs extends ASPxClientEventArgs {
-	/**
-	 * Initializes a new instance of the MVCxClientQueryBuilderSaveCommandExecutedEventArgs class with the specified settings.
-	 * @param result An object that specifies the Save command execution result.
-	 */
-	constructor(result: string);
-	/**
-	 * Specifies the Save command execution result.
-	 */
-	Result: string;
-}
-/**
- * A client-side equivalent of the MVCxDocumentViewer class.
- */
-declare class MVCxClientDocumentViewer extends ASPxClientDocumentViewer {
-	/**
-	 * Occurs before performing a document export request.
-	 */
-	BeforeExportRequest: ASPxClientEvent<MVCxClientBeforeExportRequestEventHandler<MVCxClientDocumentViewer>>;
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientDocumentViewer>>;
-}
-/**
- * Obsolete. Use the MVCxClientDocumentViewer class instead.
- */
-declare class MVCxClientReportViewer extends ASPxClientReportViewer {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientReportViewer>>;
-	/**
-	 * Occurs before performing a document export request.
-	 */
-	BeforeExportRequest: ASPxClientEvent<MVCxClientBeforeExportRequestEventHandler<MVCxClientReportViewer>>;
-}
-/**
- * A method that will handle the MVCxClientReportViewer.BeforeExportRequest event.
- * @param source An object which is the event source. Identifies the client object that raised the event.
- * @param e A MVCxClientBeforeExportRequestEventArgs object that contains event data.
- */
-interface MVCxClientBeforeExportRequestEventHandler<Sender> { (source: Sender, e: MVCxClientBeforeExportRequestEventArgs): void; }
-/**
- * Provides data for client BeforeExportRequest events.
- */
-declare class MVCxClientBeforeExportRequestEventArgs extends ASPxClientEventArgs {
-	/**
-	 * Initializes a new instance of the MVCxClientBeforeExportRequestEventArgs class with default settings.
-	 */
-	constructor();
-	/**
-	 * Gets an object containing specific information (if any, as name/value pairs) that should be passed as a request parameter from the client to the server side for further processing.
-	 */
-	customArgs: any;
-}
-/**
- * A client-side equivalent of the MVCxReportDesigner class.
- */
-declare class MVCxClientReportDesigner extends ASPxClientReportDesigner {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientReportDesigner>>;
-	/**
-	 * Occurs after executing the Save command on the client.
-	 */
-	SaveCommandExecuted: ASPxClientEvent<MVCxClientReportDesignerSaveCommandExecutedEventHandler<MVCxClientReportDesigner>>;
-	/**
-	 * Sends a callback to the server and generates the server-side event, passing it the specified argument.
-	 * @param arg A string value that represents any information that needs to be sent to the server-side event.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(arg: any, onSuccess?: (arg: string) => void): void;
-}
-/**
- * A method that will handle the MVCxReportDesignerClientSideEvents.SaveCommandExecuted event.
- * @param source An object which is the event source. Identifies the client object that raised the event.
- * @param e A MVCxClientBeforeExportRequestEventArgs object that contains event data.
- */
-interface MVCxClientReportDesignerSaveCommandExecutedEventHandler<Sender> { (source: Sender, e: MVCxClientReportDesignerSaveCommandExecutedEventArgs): void; }
-/**
- * Provides data for the MVCxClientReportDesigner.SaveCommandExecuted event.
- */
-declare class MVCxClientReportDesignerSaveCommandExecutedEventArgs extends ASPxClientEventArgs {
-	/**
-	 * Initializes a new instance of the MVCxClientReportDesignerSaveCommandExecutedEventArgs class with the specified settings.
-	 * @param result A string value that represents the result of server-side processing.
-	 */
-	constructor(result: string);
-	/**
-	 * Returns the operation result.
-	 */
-	Result: string;
-}
-/**
- * A client-side counterpart of the RichEdit extension.
- */
-declare class MVCxClientRichEdit extends ASPxClientRichEdit {
-	/**
-	 * Sends a callback with a parameter to update the RichEdit by processing the passed information on the server, in an Action specified via the RichEditSettings.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the RichEditSettings.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientRichEdit type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientRichEdit;
-}
-/**
- * A client-side counterpart of the RoundPanel extension.
- */
-declare class MVCxClientRoundPanel extends ASPxClientRoundPanel {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientRoundPanel>>;
-	/**
-	 * Sends a callback with a parameter to update the Round Panel by processing the passed information on the server, in an Action specified by the Round Panel's RoundPanelSettings.CallbackRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified by the RoundPanelSettings.CallbackRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientRoundPanel type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientRoundPanel;
-}
-/**
- * A client-side counterpart of the Scheduler extension.
- */
-declare class MVCxClientScheduler extends ASPxClientScheduler {
-	/**
-	 * Occurs on the client side when the tooltip is about to be displayed.
-	 */
-	ToolTipDisplaying: ASPxClientEvent<MVCxClientSchedulerToolTipDisplayingEventHandler<MVCxClientScheduler>>;
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientScheduler>>;
-	/**
-	 * Sends a callback with a parameter to update the Scheduler by processing the passed information on the server, in an Action specified via the Scheduler's SchedulerSettings.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the SchedulerSettings.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientScheduler type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientScheduler;
-}
-/**
- * A template that is rendered to display a tooltip.
- */
-declare class MVCxClientSchedulerTemplateToolTip extends ASPxClientToolTipBase {
-	/**
-	 * Gets the tooltip type.
-	 */
-	type: MVCxSchedulerToolTipType;
-}
-/**
- * A method that will handle the MVCxSchedulerClientSideEvents.ToolTipDisplaying event.
- * @param source An object which is the event source. Identifies the client object that raised the event.
- * @param e A MVCxClientSchedulerToolTipDisplayingEventArgs object that contains the related arguments.
- */
-interface MVCxClientSchedulerToolTipDisplayingEventHandler<Sender> { (source: Sender, e: MVCxClientSchedulerToolTipDisplayingEventArgs): void; }
-/**
- * Provides data for the MVCxClientScheduler.ToolTipDisplaying event.
- */
-declare class MVCxClientSchedulerToolTipDisplayingEventArgs extends ASPxClientEventArgs {
-	/**
-	 * Initializes new instance of the MVCxClientSchedulerToolTipDisplayingEventArgs class with the specified settings.
-	 * @param toolTip A MVCxClientSchedulerTemplateToolTip object that is a tooltip.
-	 * @param data An ASPxClientSchedulerToolTipData object that is the tooltip data.
-	 */
-	constructor(toolTip: MVCxClientSchedulerTemplateToolTip, data: ASPxClientSchedulerToolTipData);
-	/**
-	 * Gets the tooltip related to the event.
-	 */
-	toolTip: MVCxClientSchedulerTemplateToolTip;
-	/**
-	 * Gets information about the tooltip related to the event.
-	 */
-	data: ASPxClientSchedulerToolTipData;
-}
-/**
- * Lists available tooltip types.
- */
-declare class MVCxSchedulerToolTipType {
-	/**
-	 * The tooltip is displayed for a selected appointment.
-	 */
-	static readonly Appointment: number;
-	/**
-	 * The tooltip is displayed for a dragged appointment.
-	 */
-	static readonly AppointmentDrag: number;
-	/**
-	 * The tooltip is displayed for a selected time interval.
-	 */
-	static readonly Selection: number;
-}
-/**
- * A client-side counterpart of the Scheduler Storage Control extension.
- */
-declare class MVCxClientSchedulerStorage extends ASPxClientSchedulerStorageControl {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientSchedulerStorage>>;
-	/**
-	 * Converts the specified object to the MVCxClientSchedulerStorage type. SchedulerStorage
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientSchedulerStorage;
-}
-/**
- * A client-side counterpart of the Spreadsheet extension.
- */
-declare class MVCxClientSpreadsheet extends ASPxClientSpreadsheet {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientSpreadsheet>>;
-	/**
-	 * Sends a callback with a parameter to update the Spreadsheet by processing the passed information on the server, in an Action specified via the SpreadsheetSettings.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the SpreadsheetSettings.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientSpreadsheet type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientSpreadsheet;
-}
-/**
- * A client-side counterpart of the PageControl extension.
- */
-declare class MVCxClientPageControl extends ASPxClientPageControl {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientPageControl>>;
-	/**
-	 * Sends a callback with a parameter to update the PageControl by processing the passed information on the server, in an Action specified by the PageControl's PageControlSettings.CallbackRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified by the PageControlSettings.CallbackRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientPageControl type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientPageControl;
-}
-/**
- * A client-side counterpart of the TokenBox and TokenBoxFor extensions.
- */
-declare class MVCxClientTokenBox extends ASPxClientTokenBox {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientTokenBox>>;
-	/**
-	 * Sends a callback with a parameter to update the TokenBox by processing the passed information on the server, in an Action specified by the TokenBox's AutoCompleteBoxBaseSettings.CallbackRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified by the AutoCompleteBoxBaseSettings.CallbackRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Converts the specified object to the MVCxClientTokenBox type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientTokenBox;
-}
-/**
- * A client-side counterpart of the TreeList extension.
- */
-declare class MVCxClientTreeList extends ASPxClientTreeList {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientTreeList>>;
-	/**
-	 * Sends a callback with a parameter to update the TreeList by processing the passed information on the server, in an Action specified via the TreeList's TreeListSettings.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the TreeListSettings.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Sends a callback with a parameter to process the passed information on the server, in an Action specified via the TreeList's TreeListSettings.CustomDataActionRouteValues property, and then return the processing result to the client, to the ASPxClientTreeList.CustomDataCallback event. This method does not update the TreeList.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the TreeListSettings.CustomDataActionRouteValues property.
-	 */
-	PerformCustomDataCallback(data: any): void;
-	/**
-	 * Converts the specified object to the MVCxClientTreeList type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientTreeList;
-}
-/**
- * A client-side counterpart of the TreeView extension.
- */
-declare class MVCxClientTreeView extends ASPxClientTreeView {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientTreeView>>;
-	/**
-	 * Converts the specified object to the MVCxClientTreeView type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientTreeView;
-}
-/**
- * A client-side counterpart of the UploadControl extension.
- */
-declare class MVCxClientUploadControl extends ASPxClientUploadControl {
-	/**
-	 * Converts the specified object to the MVCxClientUploadControl type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientUploadControl;
-}
-/**
- * An object containing a service static function that can be useful when performing client-side processing.
- */
-declare class MVCxClientUtils {
-	/**
-	 * Loads service resources (such as scripts, CSS files, etc.) required for DevExpress functionality to work properly after a non DevExpress callback has been processed on the server and returned back to the client.
-	 */
-	static FinalizeCallback(): void;
-	/**
-	 * Returns values of editors placed in the specified container. An object containing pairs of editor names and values.
-	 * @param containerOrId A container of editors, or its ID.
-	 * @param processInvisibleEditors true to process both visible and invisible editors that belong to the specified container; false to process only visible editors.
-	 */
-	static GetSerializedEditorValuesInContainer(containerOrId: any, processInvisibleEditors?: boolean): any;
-	/**
-	 * Performs unobtrusive validation for editors in the specified container. true, if editors in the container pass the validation' otherwise, false.
-	 * @param containerId The ID of an HTML element that contains editors.
-	 * @param validateInvisibleEditors true, to validate visible and invisible DevExpress editors in the container; otherwise, to validate only visible editors.
-	 */
-	static PerformValidationInContainerById(containerId: string, validateInvisibleEditors?: boolean): boolean;
-	/**
-	 * Performs unobtrusive validation for editors in the specified container. true, if editors in the container pass the validation' otherwise, false.
-	 * @param container An HTML element that contains editors.
-	 * @param validateInvisibleEditors true, to validate visible and invisible DevExpress editors in the container; otherwise, to validate only visible editors.
-	 */
-	static PerformValidationInContainer(container: any, validateInvisibleEditors?: boolean): boolean;
-}
-/**
- * A method that will handle client BeginCallback events.
- * @param source An object which is the event source. Identifies the client object that raised the event.
- * @param e A MVCxClientBeginCallbackEventArgs object that contains event data.
- */
-interface MVCxClientBeginCallbackEventHandler<Sender> { (source: Sender, e: MVCxClientBeginCallbackEventArgs): void; }
-/**
- * Provides data for client BeginCallback events.
- */
-declare class MVCxClientBeginCallbackEventArgs extends ASPxClientBeginCallbackEventArgs {
-	/**
-	 * Initializes a new instance of the MVCxClientBeginCallbackEventArgs class.
-	 * @param command A string value that is the name of the command that initiated a callback.
-	 */
-	constructor(command: string);
-	/**
-	 * Gets an object containing specific information (if any, as name/value pairs) that should be passed as a request parameter from the client to the server side for further processing.
-	 */
-	customArgs: any;
-}
-/**
- * A method that will handle the ASPxClientGlobalEvents.BeginCallback event.
- * @param source An object which is the event source. Identifies the client object that raised the event.
- * @param e A MVCxClientGlobalBeginCallbackEventArgs object that contains event data.
- */
-interface MVCxClientGlobalBeginCallbackEventHandler<Sender> { (source: Sender, e: MVCxClientGlobalBeginCallbackEventArgs): void; }
-/**
- * Provides data for the ASPxClientGlobalEvents.BeginCallback event.
- */
-declare class MVCxClientGlobalBeginCallbackEventArgs extends ASPxClientGlobalBeginCallbackEventArgs {
-	/**
-	 * Initializes a new instance of the MVCxClientGlobalBeginCallbackEventArgs class.
-	 * @param control An ASPxClientControl class descendant object that is the control that initiated a callback.
-	 * @param command A string value that is the name of the command that initiated a callback.
-	 */
-	constructor(control: ASPxClientControl, command: string);
-	/**
-	 * Gets an object containing specific information (if any, as name/value pairs) that should be passed as a request parameter from the client to the server side for further processing.
-	 */
-	customArgs: any;
-}
-/**
- * An ASP.NET MVC equivalent of the client ASPxClientGlobalEvents component.
- */
-declare class MVCxClientGlobalEvents {
-	/**
-	 * Occurs on the client side after client object models of all DevExpress MVC extensions contained within the page have been initialized.
-	 */
-	ControlsInitialized: ASPxClientEvent<ASPxClientControlsInitializedEventHandler<MVCxClientGlobalEvents>>;
-	/**
-	 * Occurs on the client when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientGlobalBeginCallbackEventHandler<MVCxClientGlobalEvents>>;
-	/**
-	 * Occurs on the client after a callback's server-side processing has been completed.
-	 */
-	EndCallback: ASPxClientEvent<ASPxClientGlobalEndCallbackEventHandler<MVCxClientGlobalEvents>>;
-	/**
-	 * Fires on the client if any server error occurs during server-side processing of a callback sent by a DevExpress MVC extension.
-	 */
-	CallbackError: ASPxClientEvent<ASPxClientGlobalCallbackErrorEventHandler<MVCxClientGlobalEvents>>;
-	/**
-	 * Dynamically connects the MVCxClientGlobalEvents.ControlsInitialized client event with an appropriate event handler function.
-	 * @param handler A object representing the event handling function's content.
-	 */
-	static AddControlsInitializedEventHandler(handler: ASPxClientEvent<ASPxClientControlsInitializedEventHandler<MVCxClientGlobalEvents>>): void;
-	/**
-	 * Dynamically connects the MVCxClientGlobalEvents.BeginCallback client event with an appropriate event handler function.
-	 * @param handler A object containing the event handling function's content.
-	 */
-	static AddBeginCallbackEventHandler(handler: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientGlobalEvents>>): void;
-	/**
-	 * Dynamically connects the MVCxClientGlobalEvents.EndCallback client event with an appropriate event handler function.
-	 * @param handler A object containing the event handling function's content.
-	 */
-	static AddEndCallbackEventHandler(handler: ASPxClientEvent<ASPxClientEndCallbackEventHandler<MVCxClientGlobalEvents>>): void;
-	/**
-	 * Dynamically connects the MVCxClientGlobalEvents.CallbackError client event with an appropriate event handler function.
-	 * @param handler A object containing the event handling function's content.
-	 */
-	static AddCallbackErrorHandler(handler: ASPxClientEvent<ASPxClientCallbackErrorEventHandler<MVCxClientGlobalEvents>>): void;
-}
-/**
- * A client-side counterpart of the VerticalGrid extension.
- */
-declare class MVCxClientVerticalGrid extends ASPxClientVerticalGrid {
-	/**
-	 * Occurs when a callback for server-side processing is initiated.
-	 */
-	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientVerticalGrid>>;
-	/**
-	 * Sends a callback with a parameter to update the VerticalGrid by processing the passed information on the server in an Action specified via the grid's GridSettingsBase.CustomActionRouteValues property.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the grid's GridSettingsBase.CustomActionRouteValues property.
-	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
-	 */
-	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
-	/**
-	 * Sends a callback with a parameter to process the passed information on the server, in an Action specified via the VerticalGrid's GridSettingsBase.CustomDataActionRouteValues property, and then process the returned result in the specified client function. This method does not update the VerticalGrid.
-	 * @param data An object containing any information that needs to be passed to a handling Action specified via the GridSettingsBase.CustomDataActionRouteValues property.
-	 * @param onCallback A ASPxClientGridViewValuesCallback object that represents the JavaScript function which receives the information on the client side.
-	 */
-	GetValuesOnCustomCallback(data: any, onCallback: ASPxClientGridViewValuesCallback): void;
-	/**
-	 * Converts the specified object to the MVCxClientVerticalGrid type. The converted client object specified by the obj parameter.
-	 * @param obj The client object to be type cast.
-	 */
-	static Cast(obj: any): MVCxClientVerticalGrid;
-}
-/**
- * A client-side equivalent of the MVCxWebDocumentViewer class.
- */
-declare class MVCxClientWebDocumentViewer extends ASPxClientWebDocumentViewer {
 }
 
 declare class ASPxClientChartDesigner extends ASPxClientControl {
@@ -31017,6 +30186,30 @@ declare class ASPxClientGanttTaskInsertingEventArgs extends ASPxClientCancelEven
 	values: any;
 }
 /**
+ * A method that handles the TaskInserted event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTaskInsertedEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTaskInsertedEventArgs): void; }
+/**
+ * Contains data for the TaskInserted event.
+ */
+declare class ASPxClientGanttTaskInsertedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTaskInsertedEventArgs class with specified settings.
+	 * @param values The task values.
+	 */
+	constructor(values: any);
+	/**
+	 * Specifies the task values.
+	 */
+	values: any;
+	/**
+	 * Specifies the task key.
+	 */
+	key: any;
+}
+/**
  * A method that handles the TaskDeleting event.
  * @param source The event source.
  * @param e The event data.
@@ -31032,6 +30225,30 @@ declare class ASPxClientGanttTaskDeletingEventArgs extends ASPxClientCancelEvent
 	 * @param values The task values.
 	 */
 	constructor(key: any, values: any);
+	/**
+	 * Specifies the task values.
+	 */
+	values: any;
+	/**
+	 * Specifies the task key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the TaskDeleted event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTaskDeletedEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTaskDeletedEventArgs): void; }
+/**
+ * Contains data for the TaskDeleted event.
+ */
+declare class ASPxClientGanttTaskDeletedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTaskDeletedEventArgs class with specified settings.
+	 * @param values The task values.
+	 */
+	constructor(values: any);
 	/**
 	 * Specifies the task values.
 	 */
@@ -31062,6 +30279,30 @@ declare class ASPxClientGanttTaskUpdatingEventArgs extends ASPxClientCancelEvent
 	 * Specifies the task's new values.
 	 */
 	newValues: any;
+	/**
+	 * Specifies the task values.
+	 */
+	values: any;
+	/**
+	 * Specifies the task key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the TaskUpdated event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTaskUpdatedEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTaskUpdatedEventArgs): void; }
+/**
+ * Contains data for the TaskUpdated event.
+ */
+declare class ASPxClientGanttTaskUpdatedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTaskUpdatedEventArgs class with specified settings.
+	 * @param values The task values.
+	 */
+	constructor(values: any);
 	/**
 	 * Specifies the task values.
 	 */
@@ -31137,6 +30378,26 @@ declare class ASPxClientGanttTaskEditDialogShowingEventArgs extends ASPxClientCa
 	hiddenFields: string[];
 }
 /**
+ * A ResourceManagerDialogShowing event handler.
+ * @param source An event source.
+ * @param e Event data.
+ */
+interface ASPxClientGanttResourceManagerDialogShowingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttResourceManagerDialogShowingEventArgs): void; }
+/**
+ * Contains data for the ResourceManagerDialogShowing event.
+ */
+declare class ASPxClientGanttResourceManagerDialogShowingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttResourceManagerDialogShowingEventArgs class with specified settings.
+	 * @param values Resource values.
+	 */
+	constructor(values: any);
+	/**
+	 * Gets resource values.
+	 */
+	values: any;
+}
+/**
  * A method that handles the FocusedTaskChanging event.
  * @param source The event source.
  * @param e The event data.
@@ -31201,6 +30462,30 @@ declare class ASPxClientGanttDependencyInsertingEventArgs extends ASPxClientCanc
 	values: any;
 }
 /**
+ * A method that handles the DependencyInserted event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttDependencyInsertedEventHandler<Sender> { (source: Sender, e: ASPxClientGanttDependencyInsertedEventArgs): void; }
+/**
+ * Contains data for the DependencyInserted event.
+ */
+declare class ASPxClientGanttDependencyInsertedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttDependencyInsertedEventArgs class with specified settings.
+	 * @param values The dependency data.
+	 */
+	constructor(values: any);
+	/**
+	 * Specifies the dependency values.
+	 */
+	values: any;
+	/**
+	 * Specifies the dependency key.
+	 */
+	key: any;
+}
+/**
  * A method that handles the DependencyDeleting event.
  * @param source The event source.
  * @param e The event data.
@@ -31216,6 +30501,30 @@ declare class ASPxClientGanttDependencyDeletingEventArgs extends ASPxClientCance
 	 * @param values The dependency values.
 	 */
 	constructor(key: any, values: any);
+	/**
+	 * Specifies the dependency values.
+	 */
+	values: any;
+	/**
+	 * Specifies the dependency key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the DependencyDeleted event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttDependencyDeletedEventHandler<Sender> { (source: Sender, e: ASPxClientGanttDependencyDeletedEventArgs): void; }
+/**
+ * Contains data for the DependencyDeleted event.
+ */
+declare class ASPxClientGanttDependencyDeletedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttDependencyDeletedEventArgs class with specified settings.
+	 * @param values The dependency data.
+	 */
+	constructor(values: any);
 	/**
 	 * Specifies the dependency values.
 	 */
@@ -31246,6 +30555,30 @@ declare class ASPxClientGanttResourceInsertingEventArgs extends ASPxClientCancel
 	values: any;
 }
 /**
+ * A method that handles the ResourceInserting event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttResourceInsertedEventHandler<Sender> { (source: Sender, e: ASPxClientGanttResourceInsertedEventArgs): void; }
+/**
+ * Contains data for the ResourceInserted event.
+ */
+declare class ASPxClientGanttResourceInsertedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttResourceInsertedEventArgs class with specified settings.
+	 * @param values The resource values.
+	 */
+	constructor(values: any);
+	/**
+	 * Specifies the resource values.
+	 */
+	values: any;
+	/**
+	 * Specified the resource key.
+	 */
+	key: any;
+}
+/**
  * A method that handles the ResourceDeleting event.
  * @param source The event source.
  * @param e The event data.
@@ -31261,6 +30594,30 @@ declare class ASPxClientGanttResourceDeletingEventArgs extends ASPxClientCancelE
 	 * @param values The resource values.
 	 */
 	constructor(key: any, values: any);
+	/**
+	 * Specifies the resource values.
+	 */
+	values: any;
+	/**
+	 * Specifies the resource key.
+	 */
+	key: any;
+}
+/**
+ * A method that handles the ResourceDeleted event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttResourceDeletedEventHandler<Sender> { (source: Sender, e: ASPxClientGanttResourceDeletedEventArgs): void; }
+/**
+ * Contains data for the ResourceDeleted event.
+ */
+declare class ASPxClientGanttResourceDeletedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttResourceDeletedEventArgs class with specified settings.
+	 * @param values The resource values.
+	 */
+	constructor(values: any);
 	/**
 	 * Specifies the resource values.
 	 */
@@ -31291,6 +30648,30 @@ declare class ASPxClientGanttResourceAssigningEventArgs extends ASPxClientCancel
 	values: any;
 }
 /**
+ * A method that handles the ResourceAssigned event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttResourceAssignedEventHandler<Sender> { (source: Sender, e: ASPxClientGanttResourceAssignedEventArgs): void; }
+/**
+ * Contains data for the ResourceAssigned event.
+ */
+declare class ASPxClientGanttResourceAssignedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttResourceAssignedEventArgs class with specified settings.
+	 * @param values The resource values.
+	 */
+	constructor(values: any);
+	/**
+	 * Specifies the resource values.
+	 */
+	values: any;
+	/**
+	 * Specifies the resource assignment key.
+	 */
+	key: any;
+}
+/**
  * A method that handles the ResourceUnassigning event.
  * @param source The event source.
  * @param e The event data.
@@ -31316,6 +30697,30 @@ declare class ASPxClientGanttResourceUnassigningEventArgs extends ASPxClientCanc
 	key: any;
 }
 /**
+ * A method that handles the ResourceUnassigned event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttResourceUnassignedEventHandler<Sender> { (source: Sender, e: ASPxClientGanttResourceUnassignedEventArgs): void; }
+/**
+ * Contains data for the ResourceUnassigned event.
+ */
+declare class ASPxClientGanttResourceUnassignedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttResourceUnassignedEventArgs class with specified settings.
+	 * @param values The resource values.
+	 */
+	constructor(values: any);
+	/**
+	 * Specifies the resource values.
+	 */
+	values: any;
+	/**
+	 * Specifies the resource assignment key.
+	 */
+	key: any;
+}
+/**
  * A method that handles the TooltipShowing event.
  * @param source The event source.
  * @param e The event data.
@@ -31337,6 +30742,81 @@ declare class ASPxClientGanttTooltipShowingEventArgs extends ASPxClientCancelEve
 	task: any;
 	/**
 	 * Returns a container for an instance of the tooltip.
+	 */
+	container: any;
+}
+/**
+ * A method that handles the ProgressTooltipShowing event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttProgressTooltipShowingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttProgressTooltipShowingEventArgs): void; }
+/**
+ * Contains data for the ProgressTooltipShowing event.
+ */
+declare class ASPxClientGanttProgressTooltipShowingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttProgressTooltipShowingEventArgs class with specified settings.
+	 * @param container The tooltip container.
+	 * @param item The task's progress information.
+	 */
+	constructor(container: any, item: any);
+	/**
+	 * Gets the task's progress information.
+	 */
+	item: any;
+	/**
+	 * Gets the tooltip container.
+	 */
+	container: any;
+}
+/**
+ * A method that handles the TimeTooltipShowing event.
+ * @param source The event source.
+ * @param e The event data.
+ */
+interface ASPxClientGanttTimeTooltipShowingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTimeTooltipShowingEventArgs): void; }
+/**
+ * Contains data for the TimeTooltipShowing event.
+ */
+declare class ASPxClientGanttTimeTooltipShowingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTimeTooltipShowingEventArgs class with specified settings.
+	 * @param container The tooltip container.
+	 * @param item Information about the task's start and end time.
+	 */
+	constructor(container: any, item: any);
+	/**
+	 * Gets information about the task's start and end time.
+	 */
+	item: any;
+	/**
+	 * Gets the tooltip container.
+	 */
+	container: any;
+}
+/**
+ * A method that handles the TaskShowing event.
+ * @param source Event source.
+ * @param e Event data.
+ */
+interface ASPxClientGanttTaskShowingEventHandler<Sender> { (source: Sender, e: ASPxClientGanttTaskShowingEventArgs): void; }
+/**
+ * Contains data for the TaskShowing event.
+ */
+declare class ASPxClientGanttTaskShowingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGanttTaskShowingEventArgs class with specified settings.
+	 * @param container A container for the task's content.
+	 * @param item An object that contains a task object and its settings.
+	 */
+	constructor(container: any, item: any);
+	/**
+	 * Contains information about a task object and its settings.
+	 */
+	item: any;
+	/**
+	 * Returns a container for the task's content.
 	 */
 	container: any;
 }
@@ -31404,7 +30884,7 @@ declare class ASPxClientGantt extends ASPxClientControl {
 	 */
 	BeginCallback: ASPxClientEvent<ASPxClientBeginCallbackEventHandler<ASPxClientGantt>>;
 	/**
-	 * Occurs on the client side after a callback's server-side processing has been completed.
+	 * Occurs on the client side after a callback&#39;s server-side processing has been completed.
 	 */
 	EndCallback: ASPxClientEvent<ASPxClientEndCallbackEventHandler<ASPxClientGantt>>;
 	/**
@@ -31432,13 +30912,25 @@ declare class ASPxClientGantt extends ASPxClientControl {
 	 */
 	TaskInserting: ASPxClientEvent<ASPxClientGanttTaskInsertingEventHandler<ASPxClientGantt>>;
 	/**
+	 * Occurs after a user inserted a task.
+	 */
+	TaskInserted: ASPxClientEvent<ASPxClientGanttTaskInsertedEventHandler<ASPxClientGantt>>;
+	/**
 	 * Occurs before a user deletes a task.
 	 */
 	TaskDeleting: ASPxClientEvent<ASPxClientGanttTaskDeletingEventHandler<ASPxClientGantt>>;
 	/**
+	 * Occurs after a user deleted a task.
+	 */
+	TaskDeleted: ASPxClientEvent<ASPxClientGanttTaskDeletedEventHandler<ASPxClientGantt>>;
+	/**
 	 * Occurs before a user updates a task.
 	 */
 	TaskUpdating: ASPxClientEvent<ASPxClientGanttTaskUpdatingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs after a user updated a task.
+	 */
+	TaskUpdated: ASPxClientEvent<ASPxClientGanttTaskUpdatedEventHandler<ASPxClientGantt>>;
 	/**
 	 * Occurs before a user moves a task.
 	 */
@@ -31447,6 +30939,10 @@ declare class ASPxClientGantt extends ASPxClientControl {
 	 * Occurs before the edit dialog is shown.
 	 */
 	TaskEditDialogShowing: ASPxClientEvent<ASPxClientGanttTaskEditDialogShowingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before the Resource Manager dialog is shown.
+	 */
+	ResourceManagerDialogShowing: ASPxClientEvent<ASPxClientGanttResourceManagerDialogShowingEventHandler<ASPxClientGantt>>;
 	/**
 	 * Occurs before a task is focused.
 	 */
@@ -31460,29 +30956,65 @@ declare class ASPxClientGantt extends ASPxClientControl {
 	 */
 	DependencyInserting: ASPxClientEvent<ASPxClientGanttDependencyInsertingEventHandler<ASPxClientGantt>>;
 	/**
+	 * Occurs after a user inserted a dependency.
+	 */
+	DependencyInserted: ASPxClientEvent<ASPxClientGanttDependencyInsertedEventHandler<ASPxClientGantt>>;
+	/**
 	 * Occurs before a user deletes a dependency.
 	 */
 	DependencyDeleting: ASPxClientEvent<ASPxClientGanttDependencyDeletingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs after a user deleted a dependency.
+	 */
+	DependencyDeleted: ASPxClientEvent<ASPxClientGanttDependencyDeletedEventHandler<ASPxClientGantt>>;
 	/**
 	 * Occurs before a user inserts a new resource.
 	 */
 	ResourceInserting: ASPxClientEvent<ASPxClientGanttResourceInsertingEventHandler<ASPxClientGantt>>;
 	/**
+	 * Occurs after a user inserted a new resource.
+	 */
+	ResourceInserted: ASPxClientEvent<ASPxClientGanttResourceInsertedEventHandler<ASPxClientGantt>>;
+	/**
 	 * Occurs before a user deletes a resource.
 	 */
 	ResourceDeleting: ASPxClientEvent<ASPxClientGanttResourceDeletingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs after a user deleted a resource.
+	 */
+	ResourceDeleted: ASPxClientEvent<ASPxClientGanttResourceDeletedEventHandler<ASPxClientGantt>>;
 	/**
 	 * Occurs before a user assigns a resource to a task.
 	 */
 	ResourceAssigning: ASPxClientEvent<ASPxClientGanttResourceAssigningEventHandler<ASPxClientGantt>>;
 	/**
+	 * Occurs after a user assigned a resource to a task.
+	 */
+	ResourceAssigned: ASPxClientEvent<ASPxClientGanttResourceAssignedEventHandler<ASPxClientGantt>>;
+	/**
 	 * Occurs before a user removes a resource from a task.
 	 */
 	ResourceUnassigning: ASPxClientEvent<ASPxClientGanttResourceUnassigningEventHandler<ASPxClientGantt>>;
 	/**
+	 * Occurs after a user removed a resource from a task.
+	 */
+	ResourceUnassigned: ASPxClientEvent<ASPxClientGanttResourceUnassignedEventHandler<ASPxClientGantt>>;
+	/**
 	 * Occurs before a tooltip is displayed.
 	 */
 	TooltipShowing: ASPxClientEvent<ASPxClientGanttTooltipShowingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before the Gantt displays the tooltip when users resizes or moves the task in the UI.
+	 */
+	TimeTooltipShowing: ASPxClientEvent<ASPxClientGanttTimeTooltipShowingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before the Gantt displays the tooltip when users changes the task's progress in the UI.
+	 */
+	ProgressTooltipShowing: ASPxClientEvent<ASPxClientGanttProgressTooltipShowingEventHandler<ASPxClientGantt>>;
+	/**
+	 * Occurs before a task is displayed.
+	 */
+	TaskShowing: ASPxClientEvent<ASPxClientGanttTaskShowingEventHandler<ASPxClientGantt>>;
 	/**
 	 * Occurs when a user clicks a task.
 	 */
@@ -31627,15 +31159,37 @@ declare class ASPxClientGantt extends ASPxClientControl {
 	 * Gets the keys of the visible resource assignments.
 	 */
 	GetVisibleResourceAssignmentKeys(): any[];
+	/**
+	 * Scrolls the Gantt chart to the specified date.
+	 * @param date The date.
+	 */
+	ScrollToDate(date: Date | string | number): void;
+	/**
+	 * Invokes the Resource Manager dialog.
+	 */
+	ShowResourceManagerDialog(): void;
+	/**
+	 * Exports Gantt chart data to a PDF document. The PDF document.
+	 * @param options PDF export options.
+	 */
+	ExportToPdf(options: any): any;
 }
 /**
  * Declare client constants that specify the Gantt's view type.
  */
 declare class ASPxClientGanttViewType {
 	/**
+	 * Displays ten minutes.
+	 */
+	TenMinutes: number;
+	/**
 	 * Displays hours.
 	 */
 	Hours: number;
+	/**
+	 * Displays six hours.
+	 */
+	SixHours: number;
 	/**
 	 * Displays days.
 	 */
@@ -31645,9 +31199,17 @@ declare class ASPxClientGanttViewType {
 	 */
 	Weeks: number;
 	/**
-	 * Display months.
+	 * Displays months.
 	 */
 	Months: number;
+	/**
+	 * Displays quarters.
+	 */
+	Quarter: number;
+	/**
+	 * Displays years.
+	 */
+	Years: number;
 }
 /**
  * Declares client constants that specify the task title position.
@@ -32670,7 +32232,7 @@ declare class PivotExportOptions {
 declare class PieExportOptions {
 	/** @deprecated The PieExportOptions.AutoArrangeContent property is obsolete now. Use the DashboardPdfExportOptions.PieAutoArrangeContent property instead. To learn more, see the following KB article: https://www.devexpress.com/Support/Center/Question/Details/T488764 */
 	/**
-	 * Gets or sets whether dashboard item elements are arranged automatically on the exported page.
+	 * Gets or sets whether dashboard item elements are automatically arranged on the exported page.
 	 */
 	AutoArrangeContent: boolean;
 }
@@ -32680,7 +32242,7 @@ declare class PieExportOptions {
 declare class GaugeExportOptions {
 	/** @deprecated The GaugeExportOptions.AutoArrangeContent property is obsolete now. Use the DashboardPdfExportOptions.GaugeAutoArrangeContent property instead. To learn more, see the following KB article: https://www.devexpress.com/Support/Center/Question/Details/T488764 */
 	/**
-	 * Gets or sets whether dashboard item elements are arranged automatically on the exported page.
+	 * Gets or sets whether dashboard item elements are automatically arranged on the exported page.
 	 */
 	AutoArrangeContent: boolean;
 }
@@ -32690,7 +32252,7 @@ declare class GaugeExportOptions {
 declare class CardExportOptions {
 	/** @deprecated The CardExportOptions.AutoArrangeContent property is obsolete now. Use the DashboardPdfExportOptions.CardAutoArrangeContent property instead. To learn more, see the following KB article: https://www.devexpress.com/Support/Center/Question/Details/T488764 */
 	/**
-	 * Gets or sets whether dashboard item elements are arranged automatically on the exported page.
+	 * Gets or sets whether dashboard item elements are automatically arranged on the exported page.
 	 */
 	AutoArrangeContent: boolean;
 }
@@ -32780,7 +32342,7 @@ declare class ASPxClientDashboardExportOptions {
 	ScaleFactor: number;
 	/** @deprecated This AutoFitPageCount property is obsolete now. Use the DashboardPdfExportOptions.AutoFitPageCount property instead. To learn more, see the following KB article: https://www.devexpress.com/Support/Center/Question/Details/T488764 */
 	/**
-	 * Gets or sets the number of horizontal/vertical pages spanning the total width/height of a dashboard (dashboard item).
+	 * Gets or sets the number of horizontal/vertical pages that span the total width/height of a dashboard (dashboard item).
 	 */
 	AutoFitPageCount: number;
 	/** @deprecated The Title property is obsolete now. Use the DashboardPdfExportOptions.Title and DashboardImageExportOptions.Title properties instead. To learn more, see the following KB article: https://www.devexpress.com/Support/Center/Question/Details/T488764 */
@@ -32863,7 +32425,7 @@ declare class ExportFontInfo {
 	 */
 	Name: string;
 	/**
-	 * Specifies a value that specifies the GDI character set used by the current font.
+	 * Specifies a value that specifies the GDI character set for the current font.
 	 */
 	GdiCharSet: any;
 	/**
@@ -32872,7 +32434,7 @@ declare class ExportFontInfo {
 	UseCustomFontInfo: boolean;
 }
 /**
- * Contains options related to exporting a dashboard/dashboard item to the PDF format.
+ * Contains options related to exporting a dashboard/dashboard item to PDF format.
  */
 declare class DashboardPdfExportOptions {
 	/**
@@ -32901,7 +32463,7 @@ declare class DashboardPdfExportOptions {
 	 */
 	ScaleFactor: number;
 	/**
-	 * Gets or sets the number of horizontal/vertical pages spanning the total width/height of a dashboard/dashboard item.
+	 * Gets or sets the number of horizontal/vertical pages that span the total width/height of a dashboard/dashboard item.
 	 */
 	AutoFitPageCount: number;
 	/**
@@ -32929,7 +32491,7 @@ declare class DashboardPdfExportOptions {
 	 */
 	DashboardStatePosition: string;
 	/**
-	 * Gets or sets whether cards within the Card dashboard item are arranged automatically on the exported page.
+	 * Gets or sets whether cards within the Card dashboard item are automatically arranged on the exported page.
 	 */
 	CardAutoArrangeContent: boolean;
 	/**
@@ -32941,7 +32503,7 @@ declare class DashboardPdfExportOptions {
 	 */
 	ChartSizeMode: string;
 	/**
-	 * Gets or sets whether gauges within the Gauge dashboard item are arranged automatically on the exported page.
+	 * Gets or sets whether gauges within the Gauge dashboard item are automatically arranged on the exported page.
 	 */
 	GaugeAutoArrangeContent: boolean;
 	/**
@@ -32961,7 +32523,7 @@ declare class DashboardPdfExportOptions {
 	 */
 	MapSizeMode: string;
 	/**
-	 * Gets or sets whether pies within the Pie dashboard item are arranged automatically on the exported page.
+	 * Gets or sets whether pies within the Pie dashboard item are automatically arranged on the exported page.
 	 */
 	PieAutoArrangeContent: boolean;
 	/**
@@ -33031,7 +32593,7 @@ declare class DashboardImageExportOptions {
 	FontInfo: ExportFontInfo;
 }
 /**
- * Contains options related to exporting a dashboard/dashboard item to the Excel format.
+ * Contains options related to exporting a dashboard/dashboard item to Excel format.
  */
 declare class DashboardExcelExportOptions {
 	/**
@@ -33215,7 +32777,7 @@ declare class ASPxClientDashboard extends ASPxClientControl {
 	 */
 	GetWorkingMode(): string;
 	/**
-	 * Gets a value that indicates whether the Web Dashboard works in the Designer mode.
+	 * Gets a value that indicates whether the Web Dashboard works in designer mode.
 	 */
 	IsDesignMode(): boolean;
 	/**
@@ -33317,7 +32879,7 @@ declare class ASPxClientDashboard extends ASPxClientControl {
 	 */
 	GetExportOptions(): ASPxClientDashboardExportOptions;
 	/**
-	 * Allows you to obtain options related to exporting a dashboard/dashboard item to the PDF format.
+	 * Allows you to obtain options related to exporting a dashboard/dashboard item to PDF format.
 	 */
 	GetPdfExportOptions(): DashboardPdfExportOptions;
 	/**
@@ -33325,7 +32887,7 @@ declare class ASPxClientDashboard extends ASPxClientControl {
 	 */
 	GetImageExportOptions(): DashboardImageExportOptions;
 	/**
-	 * Allows you to obtain options related to exporting a dashboard/dashboard item to the Excel format.
+	 * Allows you to obtain options related to exporting a dashboard/dashboard item to Excel format.
 	 */
 	GetExcelExportOptions(): DashboardExcelExportOptions;
 	/** @deprecated This method is obsolete now. Use the ASPxClientDashboard.SetPdfExportOptions(), ASPxClientDashboard.SetImageExportOptions() and ASPxClientDashboard.SetExcelExportOptions() methods instead. To learn more, see the following KB article: https://www.devexpress.com/Support/Center/Question/Details/T488764 */
@@ -33335,18 +32897,18 @@ declare class ASPxClientDashboard extends ASPxClientControl {
 	 */
 	SetExportOptions(options: ASPxClientDashboardExportOptions): void;
 	/**
-	 * Allows you to specify options related to exporting a dashboard/dashboard item to the PDF format.
-	 * @param options A DashboardPdfExportOptions object containing options related to exporting a dashboard/dashboard item to the PDF format.
+	 * Allows you to specify options related to exporting a dashboard/dashboard item to PDF format.
+	 * @param options A DashboardPdfExportOptions object containing options related to exporting a dashboard/dashboard item to PDF format.
 	 */
 	SetPdfExportOptions(options: DashboardPdfExportOptions): void;
 	/**
 	 * Allows you to specify options related to exporting a dashboard/dashboard item to an image.
-	 * @param options A DashboardImageExportOptions object containing options related to exporting a dashboard/dashboard item to an image.
+	 * @param options A DashboardImageExportOptions object containing options related to exporting a dashboard/dashboard item as an image.
 	 */
 	SetImageExportOptions(options: DashboardImageExportOptions): void;
 	/**
-	 * Allows you to specify options related to exporting a dashboard/dashboard item to the Excel format.
-	 * @param options A DashboardExcelExportOptions object containing options related to exporting a dashboard item to the Excel format.
+	 * Allows you to specify options related to exporting a dashboard/dashboard item to Excel format.
+	 * @param options A DashboardExcelExportOptions object containing options related to exporting a dashboard item to Excel format.
 	 */
 	SetExcelExportOptions(options: DashboardExcelExportOptions): void;
 	/**
@@ -33429,7 +32991,7 @@ declare class ASPxClientDashboard extends ASPxClientControl {
 	 */
 	GetCurrentDrillDownValues(itemName: string): ASPxClientDashboardItemDataAxisPointTuple;
 	/**
-	 * Returns axis point tuples identifying elements that can be selected in the current state of the master filter item. An array of ASPxClientDashboardItemDataAxisPointTuple objects identifying elements that can be selected in the current state of the master filter item.
+	 * Returns elements that can be selected in the master filter item's current state (except Range Filter or Date Filter items). An array of ASPxClientDashboardItemDataAxisPointTuple objects identifying elements that can be selected in the current state of the master filter item.
 	 * @param itemName A String that is the component name of the master filter item.
 	 */
 	GetAvailableFilterValues(itemName: string): ASPxClientDashboardItemDataAxisPointTuple[];
@@ -33593,7 +33155,7 @@ declare class ASPxClientDashboardItemEventArgs extends ASPxClientEventArgs {
 	 */
 	IsNullValue(value: any): boolean;
 	/**
-	 * Returns whether the specified value is 'others'. true, if the specified value is 'others'; otherwise, false.
+	 * Returns whether the specified value is 'others'. true if the specified value is 'others'; otherwise, false.
 	 * @param value The specified value.
 	 */
 	IsOthersValue(value: any): boolean;
@@ -35542,6 +35104,895 @@ declare class BootstrapClientSpreadsheet extends ASPxClientSpreadsheet {
 declare class BootstrapClientTabControlWithClientTabAPI extends BootstrapClientTabControl {
 }
 declare class BootstrapClientSpreadsheetTabControl extends BootstrapClientTabControlWithClientTabAPI {
+}
+
+/**
+ * The client-side equivalent of the BinaryImageEditExtension.
+ */
+declare class MVCxClientBinaryImage extends ASPxClientBinaryImage {
+	/**
+	 * Occurs when you initiate a callback to the server.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientBinaryImage>>;
+	/**
+	 * Sends a callback with parameters to update the Binary Image.
+	 * @param data Information that is passed to the server.
+	 * @param onSuccess A client action that is performed if a callback is completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientBinaryImage type. The converted object.
+	 * @param obj The object.
+	 */
+	static Cast(obj: any): MVCxClientBinaryImage;
+}
+/**
+ * A client-side counterpart of the Calendar and CalendarFor extensions.
+ */
+declare class MVCxClientCalendar extends ASPxClientCalendar {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientCalendar>>;
+	/**
+	 * Converts the specified object to the MVCxClientCalendar type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientCalendar;
+}
+/**
+ * A client-side counterpart of the CallbackPanel extension.
+ */
+declare class MVCxClientCallbackPanel extends ASPxClientCallbackPanel {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientCallbackPanel>>;
+	/**
+	 * Sends a callback with a parameter to update the Callback Panel by processing the passed information on the server, in an Action specified by the Callback Panel's CallbackPanelSettings.CallbackRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified by the CallbackPanelSettings.CallbackRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientCallbackPanel type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientCallbackPanel;
+}
+/**
+ * A client-side counterpart of the CardView extension.
+ */
+declare class MVCxClientCardView extends ASPxClientCardView {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientCardView>>;
+	/**
+	 * Sends a callback with a parameter to update the CardView by processing the passed information on the server, in an Action specified via the CardView's GridSettingsBase.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the CardView's GridSettingsBase.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Sends a callback with a parameter to process the passed information on the server, in an Action specified via the CardView's GridSettingsBase.CustomDataActionRouteValues property, and then process the returned result in the specified client function. This method does not update the CardView.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the GridSettingsBase.CustomDataActionRouteValues property.
+	 * @param onCallback A ASPxClientCardViewValuesCallback object that represents the JavaScript function which receives the information on the client side.
+	 */
+	GetValuesOnCustomCallback(data: any, onCallback: ASPxClientCardViewValuesCallback): void;
+	/**
+	 * Converts the specified object to the MVCxClientCardView type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientCardView;
+}
+/**
+ * A client-side counterpart of the Chart extension.
+ */
+declare class MVCxClientChart extends ASPxClientWebChartControl {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientChart>>;
+	/**
+	 * Sends a callback with a parameter to update a Chart by processing the passed information on the server, in an Action specified via the Chart's ChartControlSettings.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the ChartControlSettings.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientChart type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientChart;
+}
+/**
+ * A client-side counterpart of the ComboBox and ComboBoxFor extensions.
+ */
+declare class MVCxClientComboBox extends ASPxClientComboBox {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientComboBox>>;
+	/**
+	 * Sends a callback with a parameter to update the ComboBox by processing the passed information on the server, in an Action specified by the ComboBox's AutoCompleteBoxBaseSettings.CallbackRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified by the AutoCompleteBoxBaseSettings.CallbackRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientComboBox type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientComboBox;
+}
+/**
+ * A client-side counterpart of the DataView extension.
+ */
+declare class MVCxClientDataView extends ASPxClientDataView {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientDataView>>;
+	/**
+	 * Sends a callback with a parameter to update the DataView by processing the passed information on the server, in an Action specified via the DataView's DataViewSettings.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the DataViewSettings.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientDataView type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientDataView;
+}
+/**
+ * A client-side counterpart of the DateEdit extension.
+ */
+declare class MVCxClientDateEdit extends ASPxClientDateEdit {
+	/**
+	 * Converts the specified object to the MVCxClientDateEdit type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientDateEdit;
+}
+/**
+ * A client-side counterpart of the Diagram extension.
+ */
+declare class MVCxClientDiagram extends ASPxClientDiagram {
+	/**
+	 * Converts the specified object to the MVCxClientDiagram type. The converted client object.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientDiagram;
+}
+/**
+ * A client-side counterpart of the DockManager extension.
+ */
+declare class MVCxClientDockManager extends ASPxClientDockManager {
+	/**
+	 * Sends a callback with a parameter to update the DockManager by processing the passed information on the server, in an Action specified by the DockManager's DockManagerSettings.CallbackRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified by the DockManagerSettings.CallbackRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientDockManager type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientDockManager;
+}
+/**
+ * A client-side counterpart of the DockPanel extension.
+ */
+declare class MVCxClientDockPanel extends ASPxClientDockPanel {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientDockPanel>>;
+	/**
+	 * Sends a callback with a parameter to update the DockPanel by processing the passed information on the server, in an Action specified by the DockPanel's PopupControlSettingsBase.CallbackRouteValues (via the DockPanelSettings.CallbackRouteValues) property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified by the PopupControlSettingsBase.CallbackRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientDockPanel type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientDockPanel;
+}
+/**
+ * A client-side counterpart of the FileManager extension.
+ */
+declare class MVCxClientFileManager extends ASPxClientFileManager {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientFileManager>>;
+	/**
+	 * Sends a callback to the server and generates the server-side ASPxFileManager.CustomCallback event, passing it the specified argument.
+	 * @param data A string value that specifies any information that needs to be sent to the server-side ASPxFileManager.CustomCallback event.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientFileManager type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientFileManager;
+}
+/**
+ * A client-side counterpart of the FilterControl extension.
+ */
+declare class MVCxClientFilterControl extends ASPxClientFilterControl {
+	/**
+	 * Returns the filter control's state.
+	 * @param obj An object that receives a filter control's callback parameters.
+	 */
+	FillStateObject(obj: any): void;
+	/**
+	 * Converts the specified object to the MVCxClientFilterControl type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientFilterControl;
+}
+/**
+ * A client-side counterpart of the Gantt extension.
+ */
+declare class MVCxClientGantt extends ASPxClientGantt {
+	/**
+	 * Converts the specified object to the MVCxClientGantt type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientGantt;
+}
+/**
+ * A client-side counterpart of the GridView extension.
+ */
+declare class MVCxClientGridView extends ASPxClientGridView {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientGridView>>;
+	/**
+	 * Sends a callback with a parameter to update the GridView by processing the passed information on the server, in an Action specified via the grid's GridSettingsBase.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the grid's GridSettingsBase.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Sends a callback with a parameter to process the passed information on the server, in an Action specified via the GridView's GridSettingsBase.CustomDataActionRouteValues property, and then process the returned result in the specified client function. This method does not update the GridView.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the GridSettingsBase.CustomDataActionRouteValues property.
+	 * @param onCallback A ASPxClientGridViewValuesCallback object that represents the JavaScript function which receives the information on the client side.
+	 */
+	GetValuesOnCustomCallback(data: any, onCallback: ASPxClientGridViewValuesCallback): void;
+	/**
+	 * Converts the specified object to the MVCxClientGridView type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientGridView;
+}
+/**
+ * A client-side counterpart of the HtmlEditor extension.
+ */
+declare class MVCxClientHtmlEditor extends ASPxClientHtmlEditor {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientHtmlEditor>>;
+	/**
+	 * Sends a callback with a parameter to process the passed information on the server, in an Action specified via the HtmlEditor's HtmlEditorSettings.CustomDataActionRouteValues property, and then return the processing result to the ASPxClientHtmlEditor.CustomDataCallback event on the client. This method does not update the HtmlEditor.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the HtmlEditorSettings.CustomDataActionRouteValues property.
+	 * @param onCallback An ASPxClientDataCallback object that is the JavaScript function which receives the callback data as a parameter.
+	 */
+	PerformDataCallback(data: any, onCallback?: ASPxClientDataCallback): void;
+	/**
+	 * Converts the specified object to the MVCxClientHtmlEditor type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientHtmlEditor;
+}
+/**
+ * A client-side counterpart of the ImageGallery extension.
+ */
+declare class MVCxClientImageGallery extends ASPxClientImageGallery {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientImageGallery>>;
+	/**
+	 * Sends a callback with a parameter to update the ImageGallery by processing the passed information on the server, in an Action specified via the ImageGallery's ImageGallerySettings.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the ImageGallerySettings.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientImageGallery type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientImageGallery;
+}
+/**
+ * A client-side counterpart of the ListBox and ListBoxFor extensions.
+ */
+declare class MVCxClientListBox extends ASPxClientListBox {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientListBox>>;
+	/**
+	 * Sends a callback with a parameter to update the ListBox by processing the passed information on the server, in an Action specified by the ListBox's ListBoxSettings.CallbackRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified by the ListBoxSettings.CallbackRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientListBox type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientListBox;
+}
+/**
+ * A client-side counterpart of the NavBar extension.
+ */
+declare class MVCxClientNavBar extends ASPxClientNavBar {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientNavBar>>;
+	/**
+	 * Converts the specified object to the MVCxClientNavBar type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientNavBar;
+}
+/**
+ * A client-side counterpart of the PivotGrid extension.
+ */
+declare class MVCxClientPivotGrid extends ASPxClientPivotGrid {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientPivotGrid>>;
+	/**
+	 * Sends a callback with a parameter to update the PivotGrid by processing the passed information on the server, in an Action specified via the grid's PivotGridSettings.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the grid's PivotGridSettings.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Passes PivotGrid callback parameters to the specified object.
+	 * @param obj An object that receives PivotGrid callback parameters.
+	 */
+	FillStateObject(obj: any): void;
+	/**
+	 * Converts the specified object to the MVCxClientPivotGrid type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientPivotGrid;
+}
+/**
+ * A client-side counterpart of the PopupControl extension.
+ */
+declare class MVCxClientPopupControl extends ASPxClientPopupControl {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientPopupControl>>;
+	/**
+	 * Sends a callback with a parameter to update the PopupControl by processing the passed information on the server, in an Action specified via the PopupControl's PopupControlSettingsBase.CallbackRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the PopupControlSettingsBase.CallbackRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Sends a callback with a parameters to update the popup window by processing the related popup window and the passed information on the server, in an Action specified by the PopupControl's PopupControlSettingsBase.CallbackRouteValues property.
+	 * @param window A ASPxClientPopupWindow object identifying the processed popup window.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified by the PopupControlSettingsBase.CallbackRouteValues property.
+	 */
+	PerformWindowCallback(window: ASPxClientPopupWindow, data: any): void;
+	/**
+	 * Converts the specified object to the MVCxClientPopupControl type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientPopupControl;
+}
+/**
+ * A client-side counterpart of the Query Builder extension.
+ */
+declare class MVCxClientQueryBuilder extends ASPxClientQueryBuilder {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientQueryBuilder>>;
+	/**
+	 * Occurs after executing the Save command on the client.
+	 */
+	SaveCommandExecuted: ASPxClientEvent<MVCxClientQueryBuilderSaveCommandExecutedEventHandler<MVCxClientQueryBuilder>>;
+	/**
+	 * Sends a callback to the server and generates the server-side event passing it the specified argument.
+	 * @param arg A string value that represents any information that needs to be sent to the server-side event.
+	 */
+	PerformCallback(arg: any): void;
+}
+/**
+ * A method that will handle the MVCxClientQueryBuilder.SaveCommandExecuted event.
+ * @param source An object which is the event source. Identifies the client object that raised the event.
+ * @param e A MVCxClientQueryBuilderSaveCommandExecutedEventArgs object that contains event data.
+ */
+interface MVCxClientQueryBuilderSaveCommandExecutedEventHandler<Sender> { (source: Sender, e: MVCxClientQueryBuilderSaveCommandExecutedEventArgs): void; }
+/**
+ * Provides data for the MVCxClientQueryBuilder.SaveCommandExecuted event.
+ */
+declare class MVCxClientQueryBuilderSaveCommandExecutedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the MVCxClientQueryBuilderSaveCommandExecutedEventArgs class with the specified settings.
+	 * @param result An object that specifies the Save command execution result.
+	 */
+	constructor(result: string);
+	/**
+	 * Specifies the Save command execution result.
+	 */
+	Result: string;
+}
+/**
+ * A client-side equivalent of the MVCxDocumentViewer class.
+ */
+declare class MVCxClientDocumentViewer extends ASPxClientDocumentViewer {
+	/**
+	 * Occurs before performing a document export request.
+	 */
+	BeforeExportRequest: ASPxClientEvent<MVCxClientBeforeExportRequestEventHandler<MVCxClientDocumentViewer>>;
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientDocumentViewer>>;
+}
+/**
+ * Obsolete. Use the MVCxClientDocumentViewer class instead.
+ */
+declare class MVCxClientReportViewer extends ASPxClientReportViewer {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientReportViewer>>;
+	/**
+	 * Occurs before performing a document export request.
+	 */
+	BeforeExportRequest: ASPxClientEvent<MVCxClientBeforeExportRequestEventHandler<MVCxClientReportViewer>>;
+}
+/**
+ * A method that will handle the MVCxClientReportViewer.BeforeExportRequest event.
+ * @param source An object which is the event source. Identifies the client object that raised the event.
+ * @param e A MVCxClientBeforeExportRequestEventArgs object that contains event data.
+ */
+interface MVCxClientBeforeExportRequestEventHandler<Sender> { (source: Sender, e: MVCxClientBeforeExportRequestEventArgs): void; }
+/**
+ * Provides data for client BeforeExportRequest events.
+ */
+declare class MVCxClientBeforeExportRequestEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the MVCxClientBeforeExportRequestEventArgs class with default settings.
+	 */
+	constructor();
+	/**
+	 * Gets an object containing specific information (if any, as name/value pairs) that should be passed as a request parameter from the client to the server side for further processing.
+	 */
+	customArgs: any;
+}
+/**
+ * A client-side equivalent of the MVCxReportDesigner class.
+ */
+declare class MVCxClientReportDesigner extends ASPxClientReportDesigner {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientReportDesigner>>;
+	/**
+	 * Occurs after executing the Save command on the client.
+	 */
+	SaveCommandExecuted: ASPxClientEvent<MVCxClientReportDesignerSaveCommandExecutedEventHandler<MVCxClientReportDesigner>>;
+	/**
+	 * Sends a callback to the server and generates the server-side event, passing it the specified argument.
+	 * @param arg A string value that represents any information that needs to be sent to the server-side event.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(arg: any, onSuccess?: (arg: string) => void): void;
+}
+/**
+ * A method that will handle the MVCxReportDesignerClientSideEvents.SaveCommandExecuted event.
+ * @param source An object which is the event source. Identifies the client object that raised the event.
+ * @param e A MVCxClientBeforeExportRequestEventArgs object that contains event data.
+ */
+interface MVCxClientReportDesignerSaveCommandExecutedEventHandler<Sender> { (source: Sender, e: MVCxClientReportDesignerSaveCommandExecutedEventArgs): void; }
+/**
+ * Provides data for the MVCxClientReportDesigner.SaveCommandExecuted event.
+ */
+declare class MVCxClientReportDesignerSaveCommandExecutedEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes a new instance of the MVCxClientReportDesignerSaveCommandExecutedEventArgs class with the specified settings.
+	 * @param result A string value that represents the result of server-side processing.
+	 */
+	constructor(result: string);
+	/**
+	 * Returns the operation result.
+	 */
+	Result: string;
+}
+/**
+ * A client-side counterpart of the RichEdit extension.
+ */
+declare class MVCxClientRichEdit extends ASPxClientRichEdit {
+	/**
+	 * Sends a callback with a parameter to update the RichEdit by processing the passed information on the server, in an Action specified via the RichEditSettings.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the RichEditSettings.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientRichEdit type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientRichEdit;
+}
+/**
+ * A client-side counterpart of the RoundPanel extension.
+ */
+declare class MVCxClientRoundPanel extends ASPxClientRoundPanel {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientRoundPanel>>;
+	/**
+	 * Sends a callback with a parameter to update the Round Panel by processing the passed information on the server, in an Action specified by the Round Panel's RoundPanelSettings.CallbackRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified by the RoundPanelSettings.CallbackRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientRoundPanel type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientRoundPanel;
+}
+/**
+ * A client-side counterpart of the Scheduler extension.
+ */
+declare class MVCxClientScheduler extends ASPxClientScheduler {
+	/**
+	 * Occurs on the client side when the tooltip is about to be displayed.
+	 */
+	ToolTipDisplaying: ASPxClientEvent<MVCxClientSchedulerToolTipDisplayingEventHandler<MVCxClientScheduler>>;
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientScheduler>>;
+	/**
+	 * Sends a callback with a parameter to update the Scheduler by processing the passed information on the server, in an Action specified via the Scheduler's SchedulerSettings.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the SchedulerSettings.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientScheduler type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientScheduler;
+}
+/**
+ * A template that is rendered to display a tooltip.
+ */
+declare class MVCxClientSchedulerTemplateToolTip extends ASPxClientToolTipBase {
+	/**
+	 * Gets the tooltip type.
+	 */
+	type: MVCxSchedulerToolTipType;
+}
+/**
+ * A method that will handle the MVCxSchedulerClientSideEvents.ToolTipDisplaying event.
+ * @param source An object which is the event source. Identifies the client object that raised the event.
+ * @param e A MVCxClientSchedulerToolTipDisplayingEventArgs object that contains the related arguments.
+ */
+interface MVCxClientSchedulerToolTipDisplayingEventHandler<Sender> { (source: Sender, e: MVCxClientSchedulerToolTipDisplayingEventArgs): void; }
+/**
+ * Provides data for the MVCxClientScheduler.ToolTipDisplaying event.
+ */
+declare class MVCxClientSchedulerToolTipDisplayingEventArgs extends ASPxClientEventArgs {
+	/**
+	 * Initializes new instance of the MVCxClientSchedulerToolTipDisplayingEventArgs class with the specified settings.
+	 * @param toolTip A MVCxClientSchedulerTemplateToolTip object that is a tooltip.
+	 * @param data An ASPxClientSchedulerToolTipData object that is the tooltip data.
+	 */
+	constructor(toolTip: MVCxClientSchedulerTemplateToolTip, data: ASPxClientSchedulerToolTipData);
+	/**
+	 * Gets the tooltip related to the event.
+	 */
+	toolTip: MVCxClientSchedulerTemplateToolTip;
+	/**
+	 * Gets information about the tooltip related to the event.
+	 */
+	data: ASPxClientSchedulerToolTipData;
+}
+/**
+ * Lists available tooltip types.
+ */
+declare class MVCxSchedulerToolTipType {
+	/**
+	 * The tooltip is displayed for a selected appointment.
+	 */
+	static readonly Appointment: number;
+	/**
+	 * The tooltip is displayed for a dragged appointment.
+	 */
+	static readonly AppointmentDrag: number;
+	/**
+	 * The tooltip is displayed for a selected time interval.
+	 */
+	static readonly Selection: number;
+}
+/**
+ * A client-side counterpart of the Scheduler Storage Control extension.
+ */
+declare class MVCxClientSchedulerStorage extends ASPxClientSchedulerStorageControl {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientSchedulerStorage>>;
+	/**
+	 * Converts the specified object to the MVCxClientSchedulerStorage type. SchedulerStorage
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientSchedulerStorage;
+}
+/**
+ * A client-side counterpart of the Spreadsheet extension.
+ */
+declare class MVCxClientSpreadsheet extends ASPxClientSpreadsheet {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientSpreadsheet>>;
+	/**
+	 * Sends a callback with a parameter to update the Spreadsheet by processing the passed information on the server, in an Action specified via the SpreadsheetSettings.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the SpreadsheetSettings.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientSpreadsheet type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientSpreadsheet;
+}
+/**
+ * A client-side counterpart of the PageControl extension.
+ */
+declare class MVCxClientPageControl extends ASPxClientPageControl {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientPageControl>>;
+	/**
+	 * Sends a callback with a parameter to update the PageControl by processing the passed information on the server, in an Action specified by the PageControl's PageControlSettings.CallbackRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified by the PageControlSettings.CallbackRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientPageControl type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientPageControl;
+}
+/**
+ * A client-side counterpart of the TokenBox and TokenBoxFor extensions.
+ */
+declare class MVCxClientTokenBox extends ASPxClientTokenBox {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientTokenBox>>;
+	/**
+	 * Sends a callback with a parameter to update the TokenBox by processing the passed information on the server, in an Action specified by the TokenBox's AutoCompleteBoxBaseSettings.CallbackRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified by the AutoCompleteBoxBaseSettings.CallbackRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Converts the specified object to the MVCxClientTokenBox type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientTokenBox;
+}
+/**
+ * A client-side counterpart of the TreeList extension.
+ */
+declare class MVCxClientTreeList extends ASPxClientTreeList {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientTreeList>>;
+	/**
+	 * Sends a callback with a parameter to update the TreeList by processing the passed information on the server, in an Action specified via the TreeList's TreeListSettings.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the TreeListSettings.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Sends a callback with a parameter to process the passed information on the server, in an Action specified via the TreeList's TreeListSettings.CustomDataActionRouteValues property, and then return the processing result to the client, to the ASPxClientTreeList.CustomDataCallback event. This method does not update the TreeList.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the TreeListSettings.CustomDataActionRouteValues property.
+	 */
+	PerformCustomDataCallback(data: any): void;
+	/**
+	 * Converts the specified object to the MVCxClientTreeList type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientTreeList;
+}
+/**
+ * A client-side counterpart of the TreeView extension.
+ */
+declare class MVCxClientTreeView extends ASPxClientTreeView {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientTreeView>>;
+	/**
+	 * Converts the specified object to the MVCxClientTreeView type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientTreeView;
+}
+/**
+ * A client-side counterpart of the UploadControl extension.
+ */
+declare class MVCxClientUploadControl extends ASPxClientUploadControl {
+	/**
+	 * Converts the specified object to the MVCxClientUploadControl type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientUploadControl;
+}
+/**
+ * An object containing a service static function that can be useful when performing client-side processing.
+ */
+declare class MVCxClientUtils {
+	/**
+	 * Loads service resources (such as scripts, CSS files, etc.) required for DevExpress functionality to work properly after a non DevExpress callback has been processed on the server and returned back to the client.
+	 */
+	static FinalizeCallback(): void;
+	/**
+	 * Returns values of editors placed in the specified container. An object containing pairs of editor names and values.
+	 * @param containerOrId A container of editors, or its ID.
+	 * @param processInvisibleEditors true to process both visible and invisible editors that belong to the specified container; false to process only visible editors.
+	 */
+	static GetSerializedEditorValuesInContainer(containerOrId: any, processInvisibleEditors?: boolean): any;
+	/**
+	 * Performs unobtrusive validation for editors in the specified container. true, if editors in the container pass the validation' otherwise, false.
+	 * @param containerId The ID of an HTML element that contains editors.
+	 * @param validateInvisibleEditors true, to validate visible and invisible DevExpress editors in the container; otherwise, to validate only visible editors.
+	 */
+	static PerformValidationInContainerById(containerId: string, validateInvisibleEditors?: boolean): boolean;
+	/**
+	 * Performs unobtrusive validation for editors in the specified container. true, if editors in the container pass the validation' otherwise, false.
+	 * @param container An HTML element that contains editors.
+	 * @param validateInvisibleEditors true, to validate visible and invisible DevExpress editors in the container; otherwise, to validate only visible editors.
+	 */
+	static PerformValidationInContainer(container: any, validateInvisibleEditors?: boolean): boolean;
+}
+/**
+ * A method that will handle client BeginCallback events.
+ * @param source An object which is the event source. Identifies the client object that raised the event.
+ * @param e A MVCxClientBeginCallbackEventArgs object that contains event data.
+ */
+interface MVCxClientBeginCallbackEventHandler<Sender> { (source: Sender, e: MVCxClientBeginCallbackEventArgs): void; }
+/**
+ * Provides data for client BeginCallback events.
+ */
+declare class MVCxClientBeginCallbackEventArgs extends ASPxClientBeginCallbackEventArgs {
+	/**
+	 * Initializes a new instance of the MVCxClientBeginCallbackEventArgs class.
+	 * @param command A string value that is the name of the command that initiated a callback.
+	 */
+	constructor(command: string);
+	/**
+	 * Gets an object containing specific information (if any, as name/value pairs) that should be passed as a request parameter from the client to the server side for further processing.
+	 */
+	customArgs: any;
+}
+/**
+ * A method that will handle the ASPxClientGlobalEvents.BeginCallback event.
+ * @param source An object which is the event source. Identifies the client object that raised the event.
+ * @param e A MVCxClientGlobalBeginCallbackEventArgs object that contains event data.
+ */
+interface MVCxClientGlobalBeginCallbackEventHandler<Sender> { (source: Sender, e: MVCxClientGlobalBeginCallbackEventArgs): void; }
+/**
+ * Provides data for the MVCxClientGlobalEvents.BeginCallback event.
+ */
+declare class MVCxClientGlobalBeginCallbackEventArgs extends ASPxClientGlobalBeginCallbackEventArgs {
+	/**
+	 * Initializes a new instance of the MVCxClientGlobalBeginCallbackEventArgs class.
+	 * @param control An ASPxClientControl class descendant object that is the control that initiated a callback.
+	 * @param command A string value that is the name of the command that initiated a callback.
+	 */
+	constructor(control: ASPxClientControl, command: string);
+	/**
+	 * Gets an object containing specific information (if any, as name/value pairs) that should be passed as a request parameter from the client to the server side for further processing.
+	 */
+	customArgs: any;
+}
+/**
+ * An ASP.NET MVC equivalent of the client ASPxClientGlobalEvents component.
+ */
+declare class MVCxClientGlobalEvents {
+	/**
+	 * Occurs on the client side after client object models of all DevExpress MVC extensions contained within the page have been initialized.
+	 */
+	ControlsInitialized: ASPxClientEvent<ASPxClientControlsInitializedEventHandler<MVCxClientGlobalEvents>>;
+	/**
+	 * Occurs on the client when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientGlobalBeginCallbackEventHandler<MVCxClientGlobalEvents>>;
+	/**
+	 * Occurs on the client after a callback's server-side processing has been completed.
+	 */
+	EndCallback: ASPxClientEvent<ASPxClientGlobalEndCallbackEventHandler<MVCxClientGlobalEvents>>;
+	/**
+	 * Fires on the client if any server error occurs during server-side processing of a callback sent by a DevExpress MVC extension.
+	 */
+	CallbackError: ASPxClientEvent<ASPxClientGlobalCallbackErrorEventHandler<MVCxClientGlobalEvents>>;
+	/**
+	 * Dynamically connects the MVCxClientGlobalEvents.ControlsInitialized client event with an appropriate event handler function.
+	 * @param handler A object representing the event handling function's content.
+	 */
+	static AddControlsInitializedEventHandler(handler: ASPxClientEvent<ASPxClientControlsInitializedEventHandler<MVCxClientGlobalEvents>>): void;
+	/**
+	 * Dynamically connects the MVCxClientGlobalEvents.BeginCallback client event with an appropriate event handler function.
+	 * @param handler A object containing the event handling function's content.
+	 */
+	static AddBeginCallbackEventHandler(handler: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientGlobalEvents>>): void;
+	/**
+	 * Dynamically connects the MVCxClientGlobalEvents.EndCallback client event with an appropriate event handler function.
+	 * @param handler A object containing the event handling function's content.
+	 */
+	static AddEndCallbackEventHandler(handler: ASPxClientEvent<ASPxClientEndCallbackEventHandler<MVCxClientGlobalEvents>>): void;
+	/**
+	 * Dynamically connects the MVCxClientGlobalEvents.CallbackError client event with an appropriate event handler function.
+	 * @param handler A object containing the event handling function's content.
+	 */
+	static AddCallbackErrorHandler(handler: ASPxClientEvent<ASPxClientCallbackErrorEventHandler<MVCxClientGlobalEvents>>): void;
+}
+/**
+ * A client-side counterpart of the VerticalGrid extension.
+ */
+declare class MVCxClientVerticalGrid extends ASPxClientVerticalGrid {
+	/**
+	 * Occurs when a callback for server-side processing is initiated.
+	 */
+	BeginCallback: ASPxClientEvent<MVCxClientBeginCallbackEventHandler<MVCxClientVerticalGrid>>;
+	/**
+	 * Sends a callback with a parameter to update the VerticalGrid by processing the passed information on the server in an Action specified via the grid's GridSettingsBase.CustomActionRouteValues property.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the grid's GridSettingsBase.CustomActionRouteValues property.
+	 * @param onSuccess A client action to perform if the server round-trip completed successfully.
+	 */
+	PerformCallback(data: any, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Sends a callback with a parameter to process the passed information on the server, in an Action specified via the VerticalGrid's GridSettingsBase.CustomDataActionRouteValues property, and then process the returned result in the specified client function. This method does not update the VerticalGrid.
+	 * @param data An object containing any information that needs to be passed to a handling Action specified via the GridSettingsBase.CustomDataActionRouteValues property.
+	 * @param onCallback A ASPxClientGridViewValuesCallback object that represents the JavaScript function which receives the information on the client side.
+	 */
+	GetValuesOnCustomCallback(data: any, onCallback: ASPxClientGridViewValuesCallback): void;
+	/**
+	 * Converts the specified object to the MVCxClientVerticalGrid type. The converted client object specified by the obj parameter.
+	 * @param obj The client object to be type cast.
+	 */
+	static Cast(obj: any): MVCxClientVerticalGrid;
+}
+/**
+ * A client-side equivalent of the MVCxWebDocumentViewer class.
+ */
+declare class MVCxClientWebDocumentViewer extends ASPxClientWebDocumentViewer {
 }
 
 /**

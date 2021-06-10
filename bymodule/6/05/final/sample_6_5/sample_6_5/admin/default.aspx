@@ -2,14 +2,14 @@
     CodeBehind="default.aspx.cs"
     Inherits="sample_6_5.Dashboard" %>
 
-<%@ Register Assembly="DevExpress.Web.Bootstrap.v20.2, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Web.Bootstrap.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Web.Bootstrap" TagPrefix="dx" %>
 
-<%@ Register Assembly="DevExpress.Xpo.v20.2, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Xpo.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Xpo" TagPrefix="dx" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="Head" runat="server">
-    <%--    <script src="/Scripts/jquery-3.5.1.min.js" type="text/javascript"></script>
+    <%--    <script src="/Scripts/jquery-3.6.0.min.js" type="text/javascript"></script>
 
     <link rel="stylesheet" type="text/css" href="/Content/dx.common.css" />
     <link rel="stylesheet" type="text/css" href="/Content/dx.light.css" />

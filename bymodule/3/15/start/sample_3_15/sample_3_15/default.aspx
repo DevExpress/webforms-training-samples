@@ -1,8 +1,8 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="default.aspx.cs" Inherits="sample_3_15.Default" %>
 
-<%@ Register Assembly="DevExpress.Web.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Web.v21.2, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Web" TagPrefix="dxwgv" %>
-<%@ Register Assembly="DevExpress.Web.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Web.v21.2, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Web" TagPrefix="dxe" %>
 
 <!DOCTYPE html>
@@ -15,8 +15,7 @@
     <form id="form1" runat="server">
         <ef:EntityDataSource ID="EntityDataSource1" runat="server"
             OnContextCreating="EntityDataSource1_ContextCreating"
-            EntitySetName="Countries" Include="SubRegion.Region">
-        </ef:EntityDataSource>
+            EntitySetName="Countries" Include="SubRegion.Region"></ef:EntityDataSource>
         <dxwgv:ASPxGridView ID="ASPxGridView1" runat="server"
             DataSourceID="EntityDataSource1" KeyFieldName="Id" EnableRowsCache="False" AutoGenerateColumns="False" Width="100%">
             <SettingsBehavior EnableCustomizationWindow="True" AllowFocusedRow="True" />

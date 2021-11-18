@@ -2,10 +2,10 @@
     CodeBehind="default.aspx.cs"
     Inherits="sample_6_5.Dashboard" %>
 
-<%@ Register Assembly="DevExpress.Web.Bootstrap.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Web.Bootstrap.v21.2, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Web.Bootstrap" TagPrefix="dx" %>
 
-<%@ Register Assembly="DevExpress.Xpo.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Xpo.v21.2, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Xpo" TagPrefix="dx" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="Head" runat="server">
@@ -16,6 +16,7 @@
     <script src="/Scripts/dx.viz.js" type="text/javascript"></script>--%>
 
     <link href="/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="/Content/dx.light.css" rel="stylesheet" />
 
     <style>
         .demo-dashboard-container {

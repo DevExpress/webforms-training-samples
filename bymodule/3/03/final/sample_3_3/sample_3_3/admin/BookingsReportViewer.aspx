@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Root.master" AutoEventWireup="true" CodeBehind="BookingsReportViewer.aspx.cs" Inherits="sample_3_3.BookingsReportViewer" %>
 
-<%@ Register Assembly="DevExpress.XtraReports.v21.1.Web.WebForms, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.XtraReports.v21.2.Web.WebForms, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.XtraReports.Web" TagPrefix="dx" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="Head" runat="server">

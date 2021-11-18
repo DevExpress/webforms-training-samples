@@ -2,13 +2,13 @@
     CodeBehind="PivotOverview.aspx.cs"
     Inherits="sample_6_7.PivotOverview" %>
 
-<%@ Register Assembly="DevExpress.Web.Bootstrap.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Web.Bootstrap.v21.2, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Web.Bootstrap" TagPrefix="dx" %>
 
-<%@ Register Assembly="DevExpress.Web.ASPxPivotGrid.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Web.ASPxPivotGrid.v21.2, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Web.ASPxPivotGrid" TagPrefix="dx" %>
 
-<%@ Register Assembly="DevExpress.Xpo.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Xpo.v21.2, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Xpo" TagPrefix="dx" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="Head" runat="server">

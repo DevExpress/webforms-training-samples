@@ -1,4 +1,4 @@
-// Type definitions for DevExpress ASP.NET 21.1
+// Type definitions for DevExpress ASP.NET 21.2
 // Project: https://devexpress.com/
 // Definitions by: DevExpress Inc. <https://devexpress.com/>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
@@ -63,6 +63,14 @@ declare class ASPxClientDiagram extends ASPxClientControl {
 	 * Focuses the Diagram control.
 	 */
 	Focus(): void;
+	/**
+	 * Fits the diagram content into the work area. The maximum scale is 100%.
+	 */
+	FitToContent(): void;
+	/**
+	 * Fits the diagram content's width into the work area width. The maximum scale is 100%.
+	 */
+	FitToWidth(): void;
 	/**
 	 * Imports the diagram data.
 	 * @param data The diagram data in JSON format.
@@ -979,7 +987,7 @@ declare class ASPxClientHtmlEditorInsertLinkCommandArguments extends ASPxClientH
 declare class ASPxClientHtmlEditorChangeMediaElementCommandArguments extends ASPxClientHtmlEditorCommandArguments {
 	protected constructor(htmlEditor: ASPxClientHtmlEditor, selectedElement: any);
 	/**
-	 * Defines the <a href="http://www.w3schools.com/tags/att_global_id.asp">HTML "id"</a> attribute of the target media element.
+	 * Defines the <a href="https://www.w3schools.com/tags/att_global_id.asp">HTML "id"</a> attribute of the target media element.
 	 */
 	id: string;
 	/**
@@ -14138,6 +14146,10 @@ declare class ASPxClientTreeList extends ASPxClientControl {
 	 */
 	BatchEditEndEditing: ASPxClientEvent<ASPxClientTreeListBatchEditEndEditingEventHandler<ASPxClientTreeList>>;
 	/**
+	 * Allows you to handle a Cancel button click for a node in batch edit mode.
+	 */
+	BatchEditNodeChangesCanceling: ASPxClientEvent<ASPxClientTreeListBatchEditNodeChangesCancelingEventHandler<ASPxClientTreeList>>;
+	/**
 	 * Enables you to specify whether the node date is valid and provide an error text.
 	 */
 	BatchEditNodeValidating: ASPxClientEvent<ASPxClientTreeListBatchEditNodeValidatingEventHandler<ASPxClientTreeList>>;
@@ -14556,6 +14568,31 @@ declare class ASPxClientTreeListBatchEditEndEditingEventArgs extends ASPxClientC
 	focusedColumn: ASPxClientTreeListColumn;
 	/**
 	 * Gets the value of the processed cell.
+	 */
+	nodeValues: any;
+}
+/**
+ * A method that handles the BatchEditNodeChangesCanceling event.
+ * @param source The event source. This parameter identifies the ASPxTreeList object that raises the event.
+ * @param e The event data.
+ */
+interface ASPxClientTreeListBatchEditNodeChangesCancelingEventHandler<Sender> { (source: Sender, e: ASPxClientTreeListBatchEditNodeChangesCancelingEventArgs): void; }
+/**
+ * Contains data for the BatchEditNodeChangesCanceling event.
+ */
+declare class ASPxClientTreeListBatchEditNodeChangesCancelingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientTreeListBatchEditNodeChangesCancelingEventArgs class with specified settings.
+	 * @param nodeKey The node's key.
+	 * @param nodeValues A hash table that stores information about the processed node's cells.
+	 */
+	constructor(nodeKey: string, nodeValues: any);
+	/**
+	 * Gets the node's key.
+	 */
+	nodeKey: string;
+	/**
+	 * Gets a hash table that stores information about the processed node's values.
 	 */
 	nodeValues: any;
 }
@@ -19043,8 +19080,8 @@ declare class ASPxClientPopupControlBase extends ASPxClientControl {
 	 */
 	SetHeaderText(value: string): void;
 	/**
-	 * Sets a value indicating whether the window is maximized.
-	 * @param value true. to maximize the window; otherwise, false.
+	 * Maximizes a popup window.
+	 * @param value true to maximize the window; otherwise, false.
 	 */
 	SetMaximized(value: boolean): void;
 	/**
@@ -22275,10 +22312,10 @@ declare class ASPxClientComboBox extends ASPxClientDropDownEditBase {
 	 */
 	SelectedIndexChanged: ASPxClientEvent<ASPxClientProcessingModeEventHandler<ASPxClientComboBox>>;
 	/**
-	 * Adds a new item to the end of the control's items collection. An integer value representing the position at which a new item was added.
-	 * @param text Specifies the item's text.
-	 * @param value An object that represents the item's associated value.
-	 * @param imageUrl A string value specifying the path to the image displayed by the item.
+	 * Adds a new item to the end of the control's item collection. The position of the added item within the collection.
+	 * @param text The item's text.
+	 * @param value The item's value.
+	 * @param imageUrl The path to the item's image.
 	 */
 	AddItem(text: string | string[], value?: any, imageUrl?: string): number;
 	/**
@@ -22352,8 +22389,8 @@ declare class ASPxClientComboBox extends ASPxClientDropDownEditBase {
 	 */
 	GetText(): string;
 	/**
-	 * Sends a callback to the server and generates the server-side ASPxAutoCompleteBoxBase.Callback event, passing it the specified argument.
-	 * @param parameter A string value that represents any information that needs to be sent to the server-side ASPxAutoCompleteBoxBase.Callback event.
+	 * Sends a callback to the server.
+	 * @param parameter Information for the ASPxAutoCompleteBoxBase.Callback event.
 	 */
 	PerformCallback(parameter: string): void;
 	/**
@@ -22503,7 +22540,7 @@ declare class ASPxClientDateEdit extends ASPxClientDropDownEditBase {
 	GetMinDate(): Date;
 	/**
 	 * Sets the minimum date of the editor.
-	 * @param date A DateTime object representing the minimum date.
+	 * @param date The minimum date.
 	 */
 	SetMinDate(date: Date): void;
 	/**
@@ -22512,7 +22549,7 @@ declare class ASPxClientDateEdit extends ASPxClientDropDownEditBase {
 	GetMaxDate(): Date;
 	/**
 	 * Sets the maximum date of the editor.
-	 * @param date A DateTime object representing the maximum date.
+	 * @param date The maximum date.
 	 */
 	SetMaxDate(date: Date): void;
 	/**
@@ -24486,6 +24523,10 @@ declare class ASPxClientCardView extends ASPxClientGridBase {
 	 */
 	BatchEditCardRecovering: ASPxClientEvent<ASPxClientCardViewBatchEditCardRecoveringEventHandler<ASPxClientCardView>>;
 	/**
+	 * Allows you to handle a Cancel button click for a card in batch edit mode.
+	 */
+	BatchEditCardChangesCanceling: ASPxClientEvent<ASPxClientCardViewBatchEditCardChangesCancelingEventHandler<ASPxClientCardView>>;
+	/**
 	 * Occurs on the client side when the focused cell is about to be changed.
 	 */
 	FocusedCellChanging: ASPxClientEvent<ASPxClientCardViewFocusedCellChangingEventHandler<ASPxClientCardView>>;
@@ -25122,6 +25163,31 @@ declare class ASPxClientCardViewBatchEditEndEditingEventArgs extends ASPxClientC
 	cardValues: any;
 }
 /**
+ * A method that handles the BatchEditCardChangesCanceling event.
+ * @param source The event source. This parameter identifies the ASPxCardView object that raises the event.
+ * @param e The event data.
+ */
+interface ASPxClientCardViewBatchEditCardChangesCancelingEventHandler<Sender> { (source: Sender, e: ASPxClientCardViewBatchEditCardChangesCancelingEventArgs): void; }
+/**
+ * Contains data for the BatchEditCardChangesCanceling event.
+ */
+declare class ASPxClientCardViewBatchEditCardChangesCancelingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientCardViewBatchEditCardChangesCancelingEventArgs class with specified settings.
+	 * @param visibleIndex The card's visible index.
+	 * @param cardValues A hash table that stores information about the processed card's values.
+	 */
+	constructor(visibleIndex: number, cardValues: any);
+	/**
+	 * Gets the processed card's visible index.
+	 */
+	visibleIndex: number;
+	/**
+	 * Gets a hash table that stores information about the processed card's values.
+	 */
+	cardValues: any;
+}
+/**
  * A method that will handle the ASPxClientCardView.BatchEditCardValidating event.
  * @param source The event source.
  * @param e An ASPxClientCardViewBatchEditCardValidatingEventArgs object that contains event data.
@@ -25591,6 +25657,10 @@ declare class ASPxClientGridView extends ASPxClientGridBase {
 	 */
 	ContextMenuItemClick: ASPxClientEvent<ASPxClientGridViewContextMenuItemClickEventHandler<ASPxClientGridView>>;
 	/**
+	 * Allows you to handle a Cancel button click for a row in batch edit mode.
+	 */
+	BatchEditRowChangesCanceling: ASPxClientEvent<ASPxClientGridViewBatchEditRowChangesCancelingEventHandler<ASPxClientGridView>>;
+	/**
 	 * Enables you to specify whether row data is valid and provide an error text.
 	 */
 	BatchEditRowValidating: ASPxClientEvent<ASPxClientGridViewBatchEditRowValidatingEventHandler<ASPxClientGridView>>;
@@ -25789,7 +25859,7 @@ declare class ASPxClientGridView extends ASPxClientGridBase {
 	 */
 	UnselectRowsByKey(keys: any[] | any): void;
 	/**
-	 * Deselects the specified row (if selected) within the grid.
+	 * Deselects the specified row(s) (if selected) within the grid.
 	 * @param visibleIndices Visible indices of rows to unselect.
 	 */
 	UnselectRows(visibleIndices?: number[] | number): void;
@@ -26552,6 +26622,36 @@ declare class ASPxClientGridViewBatchEditEndEditingEventArgs extends ASPxClientC
 	key: any;
 }
 /**
+ * A method that handles the BatchEditRowChangesCanceling event.
+ * @param source The event source. This parameter identifies the ASPxGridView object that raises the event.
+ * @param e The event data.
+ */
+interface ASPxClientGridViewBatchEditRowChangesCancelingEventHandler<Sender> { (source: Sender, e: ASPxClientGridViewBatchEditRowChangesCancelingEventArgs): void; }
+/**
+ * Contains data for the BatchEditRowChangesCanceling event.
+ */
+declare class ASPxClientGridViewBatchEditRowChangesCancelingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientGridViewBatchEditRowChangesCancelingEventArgs class with specified settings.
+	 * @param visibleIndex The row's visible index.
+	 * @param rowValues A hash table that stores information about the processed row's cells.
+	 * @param key The row's key.
+	 */
+	constructor(visibleIndex: number, rowValues: any, key: any);
+	/**
+	 * Gets the processed row's visible index.
+	 */
+	visibleIndex: number;
+	/**
+	 * Gets a hash table that stores information about the processed row's values.
+	 */
+	rowValues: any;
+	/**
+	 * Gets the row's key.
+	 */
+	key: any;
+}
+/**
  * A method that will handle the ASPxClientGridView.BatchEditRowValidating event.
  * @param source The event source.
  * @param e An ASPxClientGridViewBatchEditRowValidatingEventArgs object that contains event data.
@@ -27046,6 +27146,10 @@ declare class ASPxClientVerticalGrid extends ASPxClientGridBase {
 	 * Occurs on the client side before a record is deleted in batch edit mode.
 	 */
 	BatchEditRecordRecovering: ASPxClientEvent<ASPxClientVerticalGridBatchEditRecordRecoveringEventHandler<ASPxClientVerticalGrid>>;
+	/**
+	 * Allows you to handle a Cancel button click for a record in batch edit mode.
+	 */
+	BatchEditRecordChangesCanceling: ASPxClientEvent<ASPxClientVerticalGridBatchEditRecordChangesCancelingEventHandler<ASPxClientVerticalGrid>>;
 	/**
 	 * Enables you to specify whether record data is valid and provide an error text.
 	 */
@@ -27570,6 +27674,31 @@ declare class ASPxClientVerticalGridBatchEditEndEditingEventArgs extends ASPxCli
 	focusedRow: ASPxClientVerticalGridRow;
 	/**
 	 * Gets a hashtable that maintains information about editable cells.
+	 */
+	recordValues: any;
+}
+/**
+ * A method that handles the BatchEditRecordChangesCanceling event.
+ * @param source The event source. This parameter identifies the ASPxVerticalGrid object that raises the event.
+ * @param e The event data.
+ */
+interface ASPxClientVerticalGridBatchEditRecordChangesCancelingEventHandler<Sender> { (source: Sender, e: ASPxClientVerticalGridBatchEditRecordChangesCancelingEventArgs): void; }
+/**
+ * Contains data for the BatchEditRecordChangesCanceling event.
+ */
+declare class ASPxClientVerticalGridBatchEditRecordChangesCancelingEventArgs extends ASPxClientCancelEventArgs {
+	/**
+	 * Initializes a new instance of the ASPxClientVerticalGridBatchEditRecordChangesCancelingEventArgs class with specified settings.
+	 * @param visibleIndex The record's visible index.
+	 * @param recordValues A hash table that stores information about the processed record's cells.
+	 */
+	constructor(visibleIndex: number, recordValues: any);
+	/**
+	 * Gets the processed record's visible index.
+	 */
+	visibleIndex: number;
+	/**
+	 * Gets a hash table that stores information about the processed record's values.
 	 */
 	recordValues: any;
 }
@@ -31043,6 +31172,21 @@ declare class ASPxClientGantt extends ASPxClientControl {
 	 */
 	ShowResources(value: boolean): void;
 	/**
+	 * Shows or hides task dependencies.
+	 * @param value true to show dependencies; otherwise, false.
+	 */
+	ShowDependencies(value: boolean): void;
+	/**
+	 * Sets the start date of the date interval in the Gantt chart.
+	 * @param startDate The start date.
+	 */
+	SetStartDateRange(startDate: Date): void;
+	/**
+	 * Sets the end date of the date interval in the Gantt chart.
+	 * @param endDate The end date.
+	 */
+	SetEndDateRange(endDate: Date): void;
+	/**
 	 * Expands all tasks.
 	 */
 	ExpandAll(): void;
@@ -31133,6 +31277,11 @@ declare class ASPxClientGantt extends ASPxClientControl {
 	 */
 	UnassignResourceFromTask(resourceKey: any, taskKey: any): void;
 	/**
+	 * Unassigns resources from a task.
+	 * @param taskKey A task key.
+	 */
+	UnassignAllResourcesFromTask(taskKey: any): void;
+	/**
 	 * Assigns a resource to a task.
 	 * @param resourceKey The resource's key.
 	 * @param taskKey The task's key.
@@ -31168,6 +31317,29 @@ declare class ASPxClientGantt extends ASPxClientControl {
 	 * Invokes the Resource Manager dialog.
 	 */
 	ShowResourceManagerDialog(): void;
+	/**
+	 * Invokes the Task Details dialog.
+	 * @param taskKey A task key.
+	 */
+	ShowTaskDetailsDialog(taskKey: any): void;
+	/**
+	 * Zooms in the Gantt chart.
+	 */
+	ZoomIn(): void;
+	/**
+	 * Zooms out the Gantt chart.
+	 */
+	ZoomOut(): void;
+	/**
+	 * Sends a callback to the server and raises the server-side CustomCallback event.
+	 * @param args Information to pass to the CustomCallback event.
+	 * @param onSuccess A client action to perform if the Gantt control successfully completes the round trip to the server.
+	 */
+	PerformCallback(args: string, onSuccess?: (arg: string) => void): void;
+	/**
+	 * Reloads data from the data source and redraws the Gantt layout.
+	 */
+	Refresh(): void;
 	/**
 	 * Exports Gantt chart data to a PDF document. The PDF document.
 	 * @param options PDF export options.
@@ -32761,7 +32933,7 @@ declare class ASPxClientDashboard extends ASPxClientControl {
 	 */
 	CustomizeDataSourceWizard: ASPxClientEvent<ASPxClientCustomizeDataSourceWizardEventHandler<ASPxClientDashboard>>;
 	/**
-	 * Gets the DashboardControl object that is the client-side part of the Web Dashboard.
+	 * Gets the DashboardControl instance.
 	 */
 	GetDashboardControl(): any;
 	/**
@@ -32913,29 +33085,41 @@ declare class ASPxClientDashboard extends ASPxClientControl {
 	SetExcelExportOptions(options: DashboardExcelExportOptions): void;
 	/**
 	 * Exports a dashboard to a PDF file and writes it to the Response.
+	 * @param options The DashboardPdfExportOptions or js-ASPxClientDashboardExportOptions object that contains export options.
+	 * @param fileName A string that is a name of the exported file.
 	 */
 	ExportToPdf(options?: DashboardPdfExportOptions | ASPxClientDashboardExportOptions, fileName?: string): void;
 	/**
 	 * Exports a dashboard to an Image file and writes it to the Response.
+	 * @param options The DashboardImageExportOptions or js-ASPxClientDashboardExportOptions object that contains export options.
+	 * @param fileName A string that is a name of the exported image.
 	 */
 	ExportToImage(options?: DashboardImageExportOptions | ASPxClientDashboardExportOptions, fileName?: string): void;
 	/**
 	 * Exports dashboard data to the specified file in Excel format.
+	 * @param options The DashboardExcelExportOptions object that contains export options.
+	 * @param fileName A string that is a name of the exported file.
 	 */
 	ExportToExcel(options?: DashboardExcelExportOptions, fileName?: string): void;
 	/**
 	 * Exports a dashboard item to a PDF file and writes it to the Response.
 	 * @param itemName A string that is the component name of the dashboard item to be exported.
+	 * @param options The DashboardPdfExportOptions or ASPxClientDashboardExportOptions object that contains export options.
+	 * @param fileName A string that is a name of the exported file.
 	 */
 	ExportDashboardItemToPdf(itemName: string, options?: DashboardPdfExportOptions | ASPxClientDashboardExportOptions, fileName?: string): void;
 	/**
 	 * Exports a dashboard item to an Image file and writes it to the Response.
 	 * @param itemName A string that is the component name of the dashboard item to be exported.
+	 * @param options The DashboardImageExportOptions or ASPxClientDashboardExportOptions object that contains export options.
+	 * @param fileName A string that is a name of the exported image.
 	 */
 	ExportDashboardItemToImage(itemName: string, options?: DashboardImageExportOptions | ASPxClientDashboardExportOptions, fileName?: string): void;
 	/**
 	 * Exports a dashboard item to an Excel file and writes it to the Response.
 	 * @param itemName A string that is the component name of the dashboard item to be exported.
+	 * @param options The DashboardExcelExportOptions or ASPxClientDashboardExportOptions object that contains export options.
+	 * @param fileName A string that is a name of the exported file.
 	 */
 	ExportDashboardItemToExcel(itemName: string, options?: DashboardExcelExportOptions | ASPxClientDashboardExportOptions, fileName?: string): void;
 	/**
@@ -33016,6 +33200,7 @@ declare class ASPxClientDashboard extends ASPxClientControl {
 	ReloadData(): void;
 	/**
 	 * Refreshes dashboard items or the entire dashboard.
+	 * @param itemName A string that is the dashboard item name.
 	 */
 	Refresh(itemName?: string | string[]): void;
 	/**

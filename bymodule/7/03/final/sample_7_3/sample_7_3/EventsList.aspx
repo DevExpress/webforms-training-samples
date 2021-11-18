@@ -2,10 +2,10 @@
     CodeBehind="EventsList.aspx.cs"
     Inherits="sample_4_4.EventsList" %>
 
-<%@ Register Assembly="DevExpress.Web.ASPxScheduler.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Web.ASPxScheduler.v21.2, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Web.ASPxScheduler" TagPrefix="dxwschs" %>
 
-<%@ Register Assembly="DevExpress.Xpo.v21.1, Version=21.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
+<%@ Register Assembly="DevExpress.Xpo.v21.2, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a"
     Namespace="DevExpress.Xpo" TagPrefix="dx" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="Head" runat="server">
